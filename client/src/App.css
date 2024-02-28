@@ -1,0 +1,16 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo-icon-svg {
+    enableBackground: "new 0 0 122.88 111.57",
+}
+
+.logo-icon-path {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    fill: "rgb(15 23 42)",
+}
