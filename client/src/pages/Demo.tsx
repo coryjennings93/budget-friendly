@@ -1,14 +1,17 @@
-import React from "react";
 import Header from "../components/shared/Header";
-import PurchasesList from "../components/shared/PurchasesList";
-import PurchasesDemoContextProvider from "../context/PurchasesDemoContext";
+import ExpensesCompleteTable from "../components/shared/ExpensesCompleteTable";
+import ExpensesDemoContextProvider from "../context/ExpensesDemoContext";
 
 const Demo = () => {
   return (
-    <PurchasesDemoContextProvider>
-      <Header />
-      <PurchasesList />
-    </PurchasesDemoContextProvider>
+    <ExpensesDemoContextProvider>
+      <div className="solid-bg">
+        <div className="pb-4 header-bg">
+          <Header />
+        </div>
+        <ExpensesCompleteTable />
+      </div>
+    </ExpensesDemoContextProvider>
   );
 };
 

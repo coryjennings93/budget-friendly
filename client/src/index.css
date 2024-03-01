@@ -104,7 +104,7 @@ h1 {
 .menu {
   z-index: 1;
   position: fixed;
-  background-color: #A1C7E1;
+  background-color: rgb(206, 225, 22);
   width: 100%;
   padding: 1rem;
   height: 98%;
@@ -115,4 +115,11 @@ h1 {
   border: 2px solid rgb(30 41 59);
 }
 
+.header-bg {
+  background-image: radial-gradient(rgb(255 253 225), #a1c7e1);
+}
+
+.solid-bg {
+  background-color: #a1c7e1;
+}
 

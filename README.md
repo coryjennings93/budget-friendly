@@ -1,4 +1,4 @@
-# Budget Friendly 📉
+# 📉 Budget Friendly
 
 Budget Friendly is a full-stack JavaScript learning project aimed at helping individuals manage their finances effectively. It provides tools to visualize spending habits, track expenses, and stay within budget for various categories.
 
@@ -9,7 +9,7 @@ The project is structured into two separate folders:
 - **Client Side**: Contains the frontend code for the application.
 - **Server Side**: Contains the backend code for the application.
 
-## ℹ️ About the Project
+## About the Project
 
 ### 🎯 Objectives
 
@@ -46,3 +46,5 @@ To explore where I currently am in the development process, you can intereat wit
 3. Run `npm run dev` to start the development server (built with Vite).
 
 Feel free to contribute to the project or provide feedback to enhance its functionality and usability.
+
+PS: This is an updated version of an older project I had started a couple years back.

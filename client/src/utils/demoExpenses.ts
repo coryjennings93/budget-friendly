@@ -1,17 +1,6 @@
-import React, { Children, createContext, useState, ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-interface PurchasesDemoContextProviderProps {
-  children: ReactNode;
-  // any props that come into the component
-}
-
-export const PurchasesDemoContext = createContext([]);
-
-const PurchaseDemoContextProvider = ({
-  children,
-}: PurchasesDemoContextProviderProps) => {
-  const [purchases, setPurchases] = useState([
+export const demoExpenses = [
     {
       id: uuidv4(),
       date: "7/15/2021",
@@ -152,17 +141,4 @@ const PurchaseDemoContextProvider = ({
       location: "Kroger @ Clifton",
       cost: 32.28,
     },
-  ]);
-
-  const value = {
-    purchases,
-    setPurchases,
-  };
-
-  return (
-    <PurchasesDemoContext.Provider value={value}>
-      {children}
-    </PurchasesDemoContext.Provider>
-  );
-};
-export default PurchaseDemoContextProvider;
+  ];

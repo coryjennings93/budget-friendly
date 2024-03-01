@@ -48,9 +48,6 @@ const UnauthenticatedNavBar = () => {
                     A friend for your wallet.
                   </p>
                 </div>
-                <Button asChild variant="default" className="">
-                  <Link to="/">Home</Link>
-                </Button>
                 <Link to="/">
                   <button className="w-48 px-4 py-2 m-2 font-bold border-2 rounded-full hover:text-white hover:bg-sky-700 border-sky-800 ">
                     Home
