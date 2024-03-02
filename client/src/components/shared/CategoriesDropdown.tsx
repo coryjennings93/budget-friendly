@@ -5,8 +5,11 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 const CategoriesDropdown = () => {
   const {
@@ -17,16 +20,25 @@ const CategoriesDropdown = () => {
     setIsChecked,
   } = useExpensesDemo();
 
-  const [isAllChecked, setIsAllChecked] = React.useState(true);
+  const [isAllChecked, setIsAllChecked] = React.useState(() => {
+    return isChecked.length === 0 ? true : false;
+  });
 
   const all = "All";
 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">Filter by Category</Button>
+        <Button variant="outline">
+          <FontAwesomeIcon icon={faFilter} className="mr-1" />
+          Filter by Category
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent
+        className="w-56 h-56 overflow-y-scroll scroller"
+        side="bottom"
+        align="start"
+      >
         <DropdownMenuCheckboxItem
           checked={isAllChecked}
           onCheckedChange={(newCheckedState) => {
@@ -46,7 +58,7 @@ const CategoriesDropdown = () => {
         >
           {all}
         </DropdownMenuCheckboxItem>
-        {/* <DropdownMenuLabel>Appearance</DropdownMenuLabel> */}
+        <DropdownMenuSeparator />
         {categories.map(
           (category: { id: number; name: string; isChecked: boolean }) => (
             <DropdownMenuCheckboxItem

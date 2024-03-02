@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import ExpenseRow from "./ExpenseRow";
 
 const ExpensesList = () => {
   const { expenses, total, isChecked } = useExpensesDemo();
@@ -27,20 +28,10 @@ const ExpensesList = () => {
         <TableBody>
           {expenses.map((expense) =>
             isChecked.length === 0 ? (
-              <TableRow key={expense.id}>
-                <TableCell className="font-medium">{expense.date}</TableCell>
-                <TableCell>{expense.category}</TableCell>
-                <TableCell>{expense.location}</TableCell>
-                <TableCell className="text-right">{expense.cost}</TableCell>
-              </TableRow>
+              <ExpenseRow expense={expense} />
             ) : (
               isChecked.includes(expense.category) && (
-                <TableRow key={expense.id}>
-                  <TableCell className="font-medium">{expense.date}</TableCell>
-                  <TableCell>{expense.category}</TableCell>
-                  <TableCell>{expense.location}</TableCell>
-                  <TableCell className="text-right">{expense.cost}</TableCell>
-                </TableRow>
+                <ExpenseRow expense={expense} />
               )
             )
           )}

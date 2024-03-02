@@ -1,8 +1,13 @@
-import { createContext, useState, ReactNode, useContext } from "react";
+import {
+  createContext,
+  useState,
+  ReactNode,
+  useContext,
+  useEffect,
+} from "react";
 import { demoExpenses } from "@/utils/demoExpenses";
 import { v4 as uuidv4 } from "uuid";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { set } from "react-hook-form";
 
 interface ExpensesDemoContextProviderProps {
   children: ReactNode;
@@ -36,7 +41,34 @@ export const ExpensesDemoContextProvider = ({
     { id: uuidv4(), name: "Miscellaneous", isChecked: false },
   ]);
 
-  const [isChecked, setIsChecked] = useState([]);
+  const [isChecked, setIsChecked] = useLocalStorage("checked-categories", []);
+
+  // const totalFunct = () => {
+  //   return expenses.reduce((acc, expense) => acc + expense.cost, 0);
+  // };
+  // console.log(totalFunct());
+
+  const [total, setTotal] = useLocalStorage("total", () =>
+    expenses.reduce((acc, expense) => acc + expense.cost, 0)
+  );
+
+  useEffect(() => {
+    if (isChecked.length === 0) {
+      setTotal(expenses.reduce((acc, expense) => acc + expense.cost, 0));
+    } else {
+      setTotal(
+        expenses
+          .filter((expense) => isChecked.includes(expense.category))
+          .reduce((acc, expense) => acc + expense.cost, 0)
+      );
+    }
+  }, [isChecked]);
+
+  // useEffect(() =>{
+  //   setTotal(expenses.filter((expense) => isChecked.includes(expense.category)
+
+  //   )}).reduce((acc, expense) => acc + expense.cost, 0))
+  // }, [])
 
   const addExpense = ({ date, category, location, cost }) => {
     setExpenses((prevExpenses) => {
@@ -58,7 +90,7 @@ export const ExpensesDemoContextProvider = ({
     // return expenses.filter((expense) => expense.category === category);
   };
 
-  const total = expenses.reduce((acc, expense) => acc + expense.cost, 0);
+  // const total = () => expenses.reduce((acc, expense) => acc + expense.cost, 0);
 
   const deleteExpense = ({ id }) => {
     setExpenses((prevExpenses) => {
@@ -84,6 +116,7 @@ export const ExpensesDemoContextProvider = ({
         addCategory,
         filterByCategory,
         total,
+        setTotal,
         deleteExpense,
       }}
     >
