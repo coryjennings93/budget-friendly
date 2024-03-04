@@ -6,7 +6,7 @@ const ExpenseRow = ({ expense }) => {
     <TableRow key={expense.id}>
       <TableCell className="font-medium">{expense.date}</TableCell>
       <TableCell>{expense.category}</TableCell>
-      <TableCell>{expense.location}</TableCell>
+      <TableCell>{expense.descriptionOrLocation}</TableCell>
       <TableCell className="text-right">
         {currencyFormatter.format(expense.cost)}
       </TableCell>

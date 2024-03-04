@@ -4,7 +4,6 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { MEDIUM_SCREEN_SIZE, SITE_NAME } from "@/utils/constants";
-import { Button } from "@/components/ui/button";
 
 const UnauthenticatedNavBar = () => {
   const { width } = useViewport();

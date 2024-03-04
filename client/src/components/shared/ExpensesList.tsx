@@ -36,8 +36,8 @@ const ExpensesList = () => {
             )
           )}
           <TableRow>
-            <TableCell className="w-[100px]">Date</TableCell>
-            <TableCell>Category</TableCell>
+            <TableCell className="w-[100px]"></TableCell>
+            <TableCell></TableCell>
             <TableCell>
               <b>Total:</b>
             </TableCell>

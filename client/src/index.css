@@ -90,7 +90,6 @@ h1 {
 
 
 .gradient-text {
-  /* font-size: 48px; */
   font-weight: bold;
   background: linear-gradient(to right, #19985b, #2633a3); /* Define your gradient colors */
   -webkit-background-clip: text; /* Apply gradient as text color */
@@ -163,4 +162,5 @@ h1 {
       --fix: ; /* This custom property invalidates styles on hover, thereby enforcing a style recomputation. This is needed to work around a bug in Safari. */
   }
 }
+
 

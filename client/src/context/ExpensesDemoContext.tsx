@@ -70,9 +70,12 @@ export const ExpensesDemoContextProvider = ({
   //   )}).reduce((acc, expense) => acc + expense.cost, 0))
   // }, [])
 
-  const addExpense = ({ date, category, location, cost }) => {
+  const addExpense = ({ date, category, descriptionOrLocation, cost }) => {
     setExpenses((prevExpenses) => {
-      [...prevExpenses, { id: uuidv4(), date, category, location, cost }];
+      return [
+        ...prevExpenses,
+        { id: uuidv4(), date, category, descriptionOrLocation, cost },
+      ];
     });
   };
 
@@ -86,7 +89,7 @@ export const ExpensesDemoContextProvider = ({
   };
 
   const filterByCategory = (category) => {
-    console.log(expenses.filter((expense) => expense.category === category));
+    expenses.filter((expense) => expense.category === category);
     // return expenses.filter((expense) => expense.category === category);
   };
 

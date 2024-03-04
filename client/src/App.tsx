@@ -1,7 +1,12 @@
 import Routes from "./Routes";
+import { ExpensesDemoContextProvider } from "./context";
 
 function App() {
-  return <Routes />;
+  return (
+    <ExpensesDemoContextProvider>
+      <Routes />
+    </ExpensesDemoContextProvider>
+  );
 }
 
 export default App;

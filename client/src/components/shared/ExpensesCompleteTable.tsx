@@ -1,4 +1,4 @@
-import AddCategory from "./AddCategory";
+import AddExpense from "./AddExpense";
 import CategoriesDropdown from "./CategoriesDropdown";
 import ExpensesList from "./ExpensesList";
 
@@ -7,7 +7,7 @@ const ExpensesCompleteTable = () => {
     <>
       <div className="flex items-center justify-center ">
         <CategoriesDropdown />
-        <AddCategory />
+        <AddExpense />
       </div>
       <ExpensesList />
     </>
