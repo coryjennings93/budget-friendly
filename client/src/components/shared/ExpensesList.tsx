@@ -13,6 +13,7 @@ import ExpenseRow from "./ExpenseRow";
 
 const ExpensesList = () => {
   const { expenses, total, isChecked } = useExpensesDemo();
+  // console.log(expenses, total, isChecked);
 
   return (
     <div className="flex items-center justify-center ">

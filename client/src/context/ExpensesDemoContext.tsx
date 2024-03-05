@@ -62,7 +62,7 @@ export const ExpensesDemoContextProvider = ({
           .reduce((acc, expense) => acc + expense.cost, 0)
       );
     }
-  }, [isChecked]);
+  }, [isChecked, expenses]);
 
   // useEffect(() =>{
   //   setTotal(expenses.filter((expense) => isChecked.includes(expense.category)
@@ -78,6 +78,20 @@ export const ExpensesDemoContextProvider = ({
       ];
     });
   };
+
+  const editExpense = ({ id, date, category, descriptionOrLocation, cost }) => {
+    setExpenses((prevExpenses) => {
+      return prevExpenses.map((expense) => {
+        return expense.id === id
+          ? { ...expense, date, category, descriptionOrLocation, cost }
+          : expense;
+      });
+    });
+  };
+
+  // useEffect(() => {
+  //   console.log(expenses);
+  // }, [expenses]);
 
   const addCategory = ({ name }) => {
     setCategories((prevCategories) => {
@@ -95,11 +109,17 @@ export const ExpensesDemoContextProvider = ({
 
   // const total = () => expenses.reduce((acc, expense) => acc + expense.cost, 0);
 
-  const deleteExpense = ({ id }) => {
+  const deleteExpense = (expense) => {
     setExpenses((prevExpenses) => {
-      return prevExpenses.filter((expense) => expense.id !== id);
+      return prevExpenses.filter((item) => item.id !== expense.id);
     });
   };
+
+  // ({ id }) => {
+  //   setExpenses((prevExpenses) => {
+  //     return prevExpenses.filter((expense) => expense.id !== id);
+  //   });
+  // };
 
   const deleteCategory = ({ id }) => {
     setCategory((prevCategory) => {
@@ -116,6 +136,7 @@ export const ExpensesDemoContextProvider = ({
         isChecked,
         setIsChecked,
         addExpense,
+        editExpense,
         addCategory,
         filterByCategory,
         total,

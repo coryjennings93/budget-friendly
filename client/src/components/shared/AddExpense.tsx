@@ -17,9 +17,10 @@ import { Button } from "../ui/button";
 const AddExpense = () => {
   return (
     <AlertDialog>
-      <Button>
-        <AlertDialogTrigger>Add Expense</AlertDialogTrigger>
-      </Button>
+      <AlertDialogTrigger asChild>
+        <Button>Add Expense</Button>
+      </AlertDialogTrigger>
+
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>

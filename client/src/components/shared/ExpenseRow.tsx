@@ -1,5 +1,7 @@
 import { TableCell, TableRow } from "../ui/table";
 import { currencyFormatter } from "@/utils/utils";
+import DeleteExpenseButton from "./DeleteExpenseButton";
+import EditExpenseButton from "./EditExpenseButton";
 
 const ExpenseRow = ({ expense }) => {
   return (
@@ -9,6 +11,12 @@ const ExpenseRow = ({ expense }) => {
       <TableCell>{expense.descriptionOrLocation}</TableCell>
       <TableCell className="text-right">
         {currencyFormatter.format(expense.cost)}
+      </TableCell>
+      <TableCell>
+        <div className="object-right">
+          <EditExpenseButton expense={expense} />
+          <DeleteExpenseButton expense={expense} />
+        </div>
       </TableCell>
     </TableRow>
   );

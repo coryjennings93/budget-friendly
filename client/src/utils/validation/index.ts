@@ -33,6 +33,16 @@ export const AddExpenseValidation = z.object({
   descriptionOrLocation: z.string()
 })
 
+export const EditExpenseValidation = z.object({
+  id: z.string(),
+  date: z.date({
+    required_error: "A date of transaction is needed.",
+  }).transform((val) => val.toLocaleDateString("en-US")),
+  cost: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val),
+  category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),
+  descriptionOrLocation: z.string()
+})
+
 export const AddCategoryValidation = z.object({
   category: z.string().min(1, {message: "Must provide a name for the category."}).max(200, {message: 'Input cannot be over 200 characters.'})
 })

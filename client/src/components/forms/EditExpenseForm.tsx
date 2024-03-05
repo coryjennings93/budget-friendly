@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CurrencyInput from "react-currency-input-field";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { AddExpenseValidation } from "@/utils/validation";
+import { EditExpenseValidation } from "@/utils/validation";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
@@ -10,6 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -32,41 +33,23 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useExpensesDemo } from "@/context";
 import LogoIcon from "../icons/LogoIcon";
+import { useState } from "react";
 
-const AddExpenseForm = () => {
-  const { categories, expenses, addExpense } = useExpensesDemo();
+const EditExpenseForm = ({ expense, onSubmit, form }) => {
+  const { categories, expenses, editExpense } = useExpensesDemo();
   const categoriesList = categories.map((category: string) => category.name);
+  // value for currency input
+  const [value, setValue] = useState(expense.cost.toString());
 
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof AddExpenseValidation>>({
-    resolver: zodResolver(AddExpenseValidation),
-    defaultValues: {
-      date: undefined,
-      cost: undefined,
-      category: "",
-      descriptionOrLocation: "",
-    },
-  });
+  /* Defining form and submit handler are taken care of in parent componet: EditExpenseButton
+        I am not sure if this is the best way for reuse purposes but i wanted to be able to close the 
+        parent dialog alert when the form was submitted   
+    */
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof AddExpenseValidation>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    try {
-      addExpense(values);
-      //   await new Promise((resolve) => setTimeout(resolve, 1000));
-      //   throw new Error();
-      form.reset();
-    } catch (error) {
-      form.setError("root", {
-        message: "There was an error saving your expense. Please try again.",
-      });
-    }
-  }
   return (
     <Form {...form}>
       <div className="flex flex-col items-center justify-center">
-        <h2 className="mb-3 text-4xl font-bold gradient-text">Add Expense</h2>
+        <h2 className="mb-3 text-4xl font-bold gradient-text">Edit Expense</h2>
 
         <LogoIcon width="w-24" />
 
@@ -74,6 +57,24 @@ const AddExpenseForm = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col w-full gap-3 mt-4"
         >
+          <FormField
+            control={form.control}
+            name="id"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    className="hidden"
+                    id="id"
+                    placeholder="Location or description of the purchase"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className="flex flex-col mt-2 sm:flex-wrap sm:flex-row">
             <FormField
               control={form.control}
@@ -106,7 +107,7 @@ const AddExpenseForm = () => {
                         captionLayout="dropdown-buttons"
                         fromYear={1985}
                         toYear={new Date().getFullYear()}
-                        selected={new Date()}
+                        selected={field.value}
                         onSelect={field.onChange}
                         defaultMonth={field.value}
                         disabled={(date) =>
@@ -130,11 +131,15 @@ const AddExpenseForm = () => {
                     {/* <Input placeholder="&#36; 0.00" {...field} step={"any"} /> */}
                     <CurrencyInput
                       id="cost"
+                      name="cost"
                       decimalsLimit={2}
-                      placeholder="&#36; 0.00"
-                      value={field.value}
+                      placeholder="$ 0.00"
                       prefix="$ "
-                      onValueChange={field.onChange}
+                      value={value}
+                      onValueChange={(value, name, values) => {
+                        value ? setValue(value) : setValue("");
+                        field.onChange(value);
+                      }}
                       className="h-10 px-3 py-2 text-sm font-normal border rounded-md border-input"
                     />
                   </FormControl>
@@ -188,7 +193,7 @@ const AddExpenseForm = () => {
             type="submit"
             className="mt-6 text-lg"
           >
-            {form.formState.isSubmitting ? "Adding..." : "Add"}
+            {form.formState.isSubmitting ? "Editing..." : "Edit"}
           </Button>
           {form.formState.errors.root && (
             <div className="text-red-500">
@@ -201,4 +206,4 @@ const AddExpenseForm = () => {
   );
 };
 
-export default AddExpenseForm;
+export default EditExpenseForm;
