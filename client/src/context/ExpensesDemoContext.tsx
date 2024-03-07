@@ -8,6 +8,7 @@ import {
 import { demoExpenses } from "@/utils/demoExpenses";
 import { v4 as uuidv4 } from "uuid";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { format } from "date-fns";
 
 interface ExpensesDemoContextProviderProps {
   children: ReactNode;
@@ -39,18 +40,16 @@ export const ExpensesDemoContextProvider = ({
     { id: uuidv4(), name: "Savings", isChecked: false },
     { id: uuidv4(), name: "Investment", isChecked: false },
     { id: uuidv4(), name: "Miscellaneous", isChecked: false },
+    { id: uuidv4(), name: "Uncategorized", isChecked: false },
   ]);
 
   const [isChecked, setIsChecked] = useLocalStorage("checked-categories", []);
 
-  // const totalFunct = () => {
-  //   return expenses.reduce((acc, expense) => acc + expense.cost, 0);
-  // };
-  // console.log(totalFunct());
-
   const [total, setTotal] = useLocalStorage("total", () =>
     expenses.reduce((acc, expense) => acc + expense.cost, 0)
   );
+
+  const [filteredByDate, setFilteredByDate] = useState([]);
 
   useEffect(() => {
     if (isChecked.length === 0) {
@@ -70,30 +69,33 @@ export const ExpensesDemoContextProvider = ({
   //   )}).reduce((acc, expense) => acc + expense.cost, 0))
   // }, [])
 
-  const addExpense = ({ date, category, descriptionOrLocation, cost }) => {
+  const addExpense = ({ date, category, transactionDescription, cost }) => {
     setExpenses((prevExpenses) => {
       return [
         ...prevExpenses,
-        { id: uuidv4(), date, category, descriptionOrLocation, cost },
+        { id: uuidv4(), date, category, transactionDescription, cost },
       ];
     });
   };
 
-  const editExpense = ({ id, date, category, descriptionOrLocation, cost }) => {
+  const editExpense = ({
+    id,
+    date,
+    category,
+    transactionDescription,
+    cost,
+  }) => {
     setExpenses((prevExpenses) => {
       return prevExpenses.map((expense) => {
         return expense.id === id
-          ? { ...expense, date, category, descriptionOrLocation, cost }
+          ? { ...expense, date, category, transactionDescription, cost }
           : expense;
       });
     });
   };
 
-  // useEffect(() => {
-  //   console.log(expenses);
-  // }, [expenses]);
-
   const addCategory = ({ name }) => {
+    console.log(name);
     setCategories((prevCategories) => {
       if (prevCategories.find((category) => category.name === name)) {
         return prevCategories;
@@ -102,12 +104,34 @@ export const ExpensesDemoContextProvider = ({
     });
   };
 
-  const filterByCategory = (category) => {
-    expenses.filter((expense) => expense.category === category);
-    // return expenses.filter((expense) => expense.category === category);
-  };
+  // const filterByCategory = (category) => {
+  //   // expenses.filter((expense) => expense.category === category);
+  // };
 
-  // const total = () => expenses.reduce((acc, expense) => acc + expense.cost, 0);
+  const filterByDate = (date) => {
+    console.log(date);
+    if (date === undefined) {
+      console.log("date is empty");
+      return expenses;
+    }
+    if (date.from === undefined || date.to === undefined) {
+      console.log("from or to is empty");
+      return expenses;
+    }
+    console.log("outside");
+    setFilteredByDate(
+      expenses.filter((expense) => {
+        const expenseDate = new Date(expense.date).getTime();
+
+        // console.log(expenseDate);
+        // console.log(date.from);
+        // console.log(date.to);
+        return (
+          expenseDate >= date.from.getTime() && expenseDate <= date.to.getTime()
+        );
+      })
+    );
+  };
 
   const deleteExpense = (expense) => {
     setExpenses((prevExpenses) => {
@@ -115,15 +139,18 @@ export const ExpensesDemoContextProvider = ({
     });
   };
 
-  // ({ id }) => {
-  //   setExpenses((prevExpenses) => {
-  //     return prevExpenses.filter((expense) => expense.id !== id);
-  //   });
-  // };
+  const deleteCategory = (id, category) => {
+    setCategories((prevCategory) => {
+      return prevCategory.filter((cateory) => cateory.id !== id);
+    });
 
-  const deleteCategory = ({ id }) => {
-    setCategory((prevCategory) => {
-      return prevCategory.filter((cateory) => expense.id !== id);
+    // move all expenses that was in deleted category to uncategorized
+    setExpenses((prevExpenses) => {
+      return prevExpenses.map((expense) => {
+        return expense.category === category
+          ? { ...expense, category: "Uncategorized" }
+          : expense;
+      });
     });
   };
 
@@ -138,10 +165,14 @@ export const ExpensesDemoContextProvider = ({
         addExpense,
         editExpense,
         addCategory,
-        filterByCategory,
+        // filterByCategory,
         total,
         setTotal,
         deleteExpense,
+        deleteCategory,
+        filterByDate,
+        filteredByDate,
+        setFilteredByDate,
       }}
     >
       {children}

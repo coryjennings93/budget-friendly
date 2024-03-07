@@ -11,7 +11,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
-const CategoriesDropdown = () => {
+const CategoriesDropdown = ({}) => {
   const {
     categories,
     setCategories,
@@ -89,7 +89,7 @@ const CategoriesDropdown = () => {
                   }
                 });
 
-                filterByCategory(category.name);
+                // filterByCategory(category.name);
               }}
             >
               {category.name}

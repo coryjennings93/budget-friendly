@@ -1,11 +1,8 @@
 import { SITE_NAME } from "../../utils/constants";
 import UnauthenticatedNavBar from "./UnauthenticatedNavBar";
 import LogoIcon from "../icons/LogoIcon";
-import { useExpensesDemo } from "@/context";
 
 const Header = () => {
-  const { categories } = useExpensesDemo();
-
   return (
     <>
       <UnauthenticatedNavBar />

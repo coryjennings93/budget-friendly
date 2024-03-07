@@ -1,14 +1,11 @@
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import EditExpenseForm from "../forms/EditExpenseForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EditExpenseValidation } from "@/utils/validation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const EditExpenseButton = ({ expense }) => {
   const [open, setOpen] = useState(false);
@@ -29,10 +27,10 @@ const EditExpenseButton = ({ expense }) => {
     resolver: zodResolver(EditExpenseValidation),
     defaultValues: {
       id: expense.id,
-      date: new Date(expense.date),
+      date: undefined,
       cost: expense.cost.toString(),
       category: expense.category,
-      descriptionOrLocation: expense.descriptionOrLocation,
+      transactionDescription: expense.transactionDescription,
     },
   });
 
@@ -42,8 +40,8 @@ const EditExpenseButton = ({ expense }) => {
     // ✅ This will be type-safe and validated.
     try {
       editExpense(values);
-      //   await new Promise((resolve) => setTimeout(resolve, 1000));
-      //   throw new Error();
+
+      console.log(values);
       setOpen(false);
     } catch (error) {
       form.setError("root", {
@@ -53,31 +51,16 @@ const EditExpenseButton = ({ expense }) => {
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button className="p-0" title="edit">
           <FontAwesomeIcon className="p-4 " icon={faPenToSquare} />
         </Button>
-      </AlertDialogTrigger>
-
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            {" "}
-            <span className="float-right">
-              <AlertDialogCancel onClick={() => form.reset()}>
-                <FontAwesomeIcon icon={faXmark} size="lg" />
-              </AlertDialogCancel>
-            </span>
-          </AlertDialogTitle>
-        </AlertDialogHeader>
+      </DialogTrigger>
+      <DialogContent className={"overflow-y-auto max-h-screen"}>
         <EditExpenseForm expense={expense} onSubmit={onSubmit} form={form} />
-        <AlertDialogFooter>
-          {/* <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction> */}
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+      </DialogContent>{" "}
+    </Dialog>
   );
 };
 

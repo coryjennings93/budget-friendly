@@ -8,12 +8,12 @@ const ExpenseRow = ({ expense }) => {
     <TableRow key={expense.id}>
       <TableCell className="font-medium">{expense.date}</TableCell>
       <TableCell>{expense.category}</TableCell>
-      <TableCell>{expense.descriptionOrLocation}</TableCell>
+      <TableCell>{expense.transactionDescription}</TableCell>
       <TableCell className="text-right">
         {currencyFormatter.format(expense.cost)}
       </TableCell>
-      <TableCell>
-        <div className="object-right">
+      <TableCell className="">
+        <div className="flex gap-2">
           <EditExpenseButton expense={expense} />
           <DeleteExpenseButton expense={expense} />
         </div>

@@ -24,13 +24,18 @@ export const SignupValidation = z.object({
   confirmPassword: z.string().min(6, {message: 'Password must be at least 6 characters.'}).max(15, {message: 'Password cannot be over 15 characters.'})
 }).refine((data) => data.password === data.confirmPassword, {message: 'Passwords do not match.', path: ['confirmPassword']})
 
+export const LoginValidation = z.object({
+  email: z.string().email({message: "Invalid email."}),
+  password: z.string().min(1, {message: 'Please enter your password.'}).max(15, {message: 'Password cannot be over 15 characters.'})});
+
+
 export const AddExpenseValidation = z.object({
   date: z.date({
     required_error: "A date of transaction is needed.",
   }).transform((val) => val.toLocaleDateString("en-US")),
   cost: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val),
   category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),
-  descriptionOrLocation: z.string()
+  transactionDescription: z.string()
 })
 
 export const EditExpenseValidation = z.object({
@@ -40,11 +45,22 @@ export const EditExpenseValidation = z.object({
   }).transform((val) => val.toLocaleDateString("en-US")),
   cost: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val),
   category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),
-  descriptionOrLocation: z.string()
+  transactionDescription: z.string()
 })
 
 export const AddCategoryValidation = z.object({
-  category: z.string().min(1, {message: "Must provide a name for the category."}).max(200, {message: 'Input cannot be over 200 characters.'})
+  name: z
+    .string()
+    .min(2, {
+      message: "Category must be at least 2 characters.",
+    })
+    .max(200, { message: "Input cannot be over 200 characters." }),
+});
+
+export const DeleteCategoryValidation = z.object({
+  name: z.string({
+    required_error: "Please select a language.",
+  }),
 })
 
 

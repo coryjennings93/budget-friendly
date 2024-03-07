@@ -44,7 +44,7 @@ const AddExpenseForm = () => {
       date: undefined,
       cost: undefined,
       category: "",
-      descriptionOrLocation: "",
+      transactionDescription: "",
     },
   });
 
@@ -106,7 +106,7 @@ const AddExpenseForm = () => {
                         captionLayout="dropdown-buttons"
                         fromYear={1985}
                         toYear={new Date().getFullYear()}
-                        selected={new Date()}
+                        selected={field.value}
                         onSelect={field.onChange}
                         defaultMonth={field.value}
                         disabled={(date) =>
@@ -167,13 +167,13 @@ const AddExpenseForm = () => {
           />
           <FormField
             control={form.control}
-            name="descriptionOrLocation"
+            name="transactionDescription"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Input
-                    id="descriptionOrLocation"
+                    id="transactionDescription"
                     placeholder="Location or description of the purchase"
                     {...field}
                   />

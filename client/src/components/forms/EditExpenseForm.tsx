@@ -1,8 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import CurrencyInput from "react-currency-input-field";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { EditExpenseValidation } from "@/utils/validation";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
@@ -38,8 +34,15 @@ import { useState } from "react";
 const EditExpenseForm = ({ expense, onSubmit, form }) => {
   const { categories, expenses, editExpense } = useExpensesDemo();
   const categoriesList = categories.map((category: string) => category.name);
-  // value for currency input
-  const [value, setValue] = useState(expense.cost.toString());
+  // need to set state to clear the field values back to original values when closed without saving
+
+  const [costValue, setCostValue] = useState(expense.cost.toString());
+  const [categoryValue, setCategoryValue] = useState(expense.category);
+  const [dateValue, setDateValue] = useState(new Date(expense.date));
+  const [transactionValue, setTransactionValue] = useState(
+    expense.transactionDescription
+  );
+  console.log(expense);
 
   /* Defining form and submit handler are taken care of in parent componet: EditExpenseButton
         I am not sure if this is the best way for reuse purposes but i wanted to be able to close the 
@@ -79,6 +82,7 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
             <FormField
               control={form.control}
               name="date"
+              defaultValue={new Date(expense.date)}
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date</FormLabel>
@@ -93,7 +97,7 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "MM/dd/yyyy")
+                            format(new Date(dateValue), "MM/dd/yyyy")
                           ) : (
                             <span>Date of expense</span>
                           )}
@@ -107,9 +111,13 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
                         captionLayout="dropdown-buttons"
                         fromYear={1985}
                         toYear={new Date().getFullYear()}
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        defaultMonth={field.value}
+                        selected={new Date(dateValue)}
+                        onSelect={(e) => {
+                          console.log(e);
+                          field.onChange(e);
+                          setDateValue(e);
+                        }}
+                        defaultMonth={new Date(dateValue)}
                         disabled={(date) =>
                           date > new Date() || date < new Date("1900-01-01")
                         }
@@ -135,9 +143,9 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
                       decimalsLimit={2}
                       placeholder="$ 0.00"
                       prefix="$ "
-                      value={value}
+                      value={costValue}
                       onValueChange={(value, name, values) => {
-                        value ? setValue(value) : setValue("");
+                        value ? setCostValue(value) : setCostValue("");
                         field.onChange(value);
                       }}
                       className="h-10 px-3 py-2 text-sm font-normal border rounded-md border-input"
@@ -154,7 +162,13 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={(value) => {
+                    value ? setCategoryValue(value) : setCategoryValue("");
+                    field.onChange(value);
+                  }}
+                  value={categoryValue}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a Category" />
@@ -172,15 +186,21 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
           />
           <FormField
             control={form.control}
-            name="descriptionOrLocation"
+            name="transactionDescription"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Input
-                    id="descriptionOrLocation"
+                    id="transactionDescription"
                     placeholder="Location or description of the purchase"
-                    {...field}
+                    value={transactionValue}
+                    onChange={(e) => {
+                      e.target.value
+                        ? setTransactionValue(e.target.value)
+                        : setTransactionValue("");
+                      field.onChange(e.target.value);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -193,7 +213,7 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
             type="submit"
             className="mt-6 text-lg"
           >
-            {form.formState.isSubmitting ? "Editing..." : "Edit"}
+            {form.formState.isSubmitting ? "Saving..." : "Save"}
           </Button>
           {form.formState.errors.root && (
             <div className="text-red-500">

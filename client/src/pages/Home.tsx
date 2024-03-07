@@ -5,7 +5,7 @@ import LogoIcon from "@/components/icons/LogoIcon";
 
 const Home = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen radial-bg">
       <h1 className="pb-2 mb-1 text-4xl sm:text-6xl text-slate-800 md:text-8xl gradient-text">
         {SITE_NAME}
       </h1>

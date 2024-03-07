@@ -56,27 +56,34 @@ function Calendar({
       }}
       components={{
         IconLeft: ({ ...props }) => <ChevronLeft className="w-4 h-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="w-4 h-4" />,
+        IconRight: ({ ...props }) => {
+          return <ChevronRight className="w-4 h-4" />;
+        },
         Dropdown: ({ ...props }) => {
           const { fromDate, fromMonth, fromYear, toDate, toMonth, toYear } =
             useDayPicker();
 
-          const { goToMonth, currentMonth } = useNavigation();
+          const { goToMonth, currentMonth, displayMonths } = useNavigation();
+
           if (props.name === "months") {
             const selectItems = Array.from({ length: 12 }, (_, i) => ({
               value: i.toString(),
               label: format(setMonth(new Date(), i), "MMM"),
             }));
+
             return (
               <Select
                 onValueChange={(newValue) => {
+                  console.log(props.value);
                   const newDate = new Date(currentMonth);
                   newDate.setMonth(parseInt(newValue));
                   goToMonth(newDate);
                 }}
                 value={props.value?.toString()}
               >
-                <SelectTrigger>{format(currentMonth, "MMM")}</SelectTrigger>
+                <SelectTrigger>
+                  {format(new Date(currentMonth), "MMM")}
+                </SelectTrigger>
                 <SelectContent>
                   {selectItems.map((item) => (
                     <SelectItem key={item.value} value={item.value}>
