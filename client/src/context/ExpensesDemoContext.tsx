@@ -8,7 +8,7 @@ import {
 import { demoExpenses } from "@/utils/demoExpenses";
 import { v4 as uuidv4 } from "uuid";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 
 interface ExpensesDemoContextProviderProps {
   children: ReactNode;
@@ -50,18 +50,43 @@ export const ExpensesDemoContextProvider = ({
   );
 
   const [filteredByDate, setFilteredByDate] = useState([]);
+  // use this to show that the date filter has been used but nneded to show that there are no
+  // expenses for that range and need to show nothing. used to differentiate from the state where no
+  // range has been selected
+  const [dateFilter, setDateFilter] = useState(false);
 
+  // set total based on checked categories and filtered by date
   useEffect(() => {
-    if (isChecked.length === 0) {
-      setTotal(expenses.reduce((acc, expense) => acc + expense.cost, 0));
-    } else {
+    if (isChecked.length === 0 && filteredByDate.length === 0) {
+      if (dateFilter) {
+        setTotal(0);
+      } else {
+        setTotal(expenses.reduce((acc, expense) => acc + expense.cost, 0));
+      }
+    } else if (filteredByDate.length === 0 && isChecked.length > 0) {
       setTotal(
         expenses
           .filter((expense) => isChecked.includes(expense.category))
           .reduce((acc, expense) => acc + expense.cost, 0)
       );
+    } else if (filteredByDate.length > 0 && isChecked.length === 0) {
+      setTotal(
+        expenses
+          .filter((expense) => filteredByDate.includes(expense))
+          .reduce((acc, expense) => acc + expense.cost, 0)
+      );
+    } else {
+      setTotal(
+        expenses
+          .filter(
+            (expense) =>
+              isChecked.includes(expense.category) &&
+              filteredByDate.includes(expense)
+          )
+          .reduce((acc, expense) => acc + expense.cost, 0)
+      );
     }
-  }, [isChecked, expenses]);
+  }, [isChecked, expenses, filteredByDate]);
 
   // useEffect(() =>{
   //   setTotal(expenses.filter((expense) => isChecked.includes(expense.category)
@@ -95,7 +120,6 @@ export const ExpensesDemoContextProvider = ({
   };
 
   const addCategory = ({ name }) => {
-    console.log(name);
     setCategories((prevCategories) => {
       if (prevCategories.find((category) => category.name === name)) {
         return prevCategories;
@@ -108,21 +132,29 @@ export const ExpensesDemoContextProvider = ({
   //   // expenses.filter((expense) => expense.category === category);
   // };
 
+  useEffect(() => {
+    console.log(dateFilter);
+  }, [dateFilter]);
+
   const filterByDate = (date) => {
-    console.log(date);
     if (date === undefined) {
-      console.log("date is empty");
-      return expenses;
+      setFilteredByDate([]);
+      setDateFilter(false);
+      return;
     }
     if (date.from === undefined || date.to === undefined) {
-      console.log("from or to is empty");
+      setFilteredByDate([]);
+      setDateFilter(false);
       return expenses;
     }
-    console.log("outside");
+
+    setDateFilter(true);
     setFilteredByDate(
       expenses.filter((expense) => {
         const expenseDate = new Date(expense.date).getTime();
-
+        // console.log(
+        //   expenseDate >= date.from.getTime() && expenseDate <= date.to.getTime()
+        // );
         // console.log(expenseDate);
         // console.log(date.from);
         // console.log(date.to);
@@ -173,6 +205,7 @@ export const ExpensesDemoContextProvider = ({
         filterByDate,
         filteredByDate,
         setFilteredByDate,
+        dateFilter,
       }}
     >
       {children}

@@ -23,9 +23,6 @@ const ExpensesCompleteTable = () => {
           <div>
             <FilterByDateButton />
           </div>
-          <div>
-            <Button>Clear</Button>
-          </div>
 
           <div className="ml-auto">
             <AddExpense />

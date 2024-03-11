@@ -74,7 +74,6 @@ function Calendar({
             return (
               <Select
                 onValueChange={(newValue) => {
-                  console.log(props.value);
                   const newDate = new Date(currentMonth);
                   newDate.setMonth(parseInt(newValue));
                   goToMonth(newDate);

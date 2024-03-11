@@ -168,4 +168,17 @@ h1 {
   }
 }
 
+.clear-date-range-x-container {
+  height: 2.5rem;
+  font-size: .875rem;
+}
+
+.clear-date-range-x:hover {
+  background-color: hsl(var(--input));
+}
+
+.clear-date-range-select-button {
+  border-radius: .5rem 0 0 .5rem;
+}
+
 

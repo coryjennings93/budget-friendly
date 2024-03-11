@@ -16,9 +16,37 @@ import { useViewport } from "@/hooks/useViewport";
 import ExpenseCard from "./ExpenseCard";
 
 const ExpensesList = () => {
-  const { expenses, total, isChecked, filteredByDate } = useExpensesDemo();
+  const { expenses, total, isChecked, filteredByDate, dateFilter } =
+    useExpensesDemo();
   const { width } = useViewport();
   expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  if (filteredByDate.length > 0) {
+  }
+
+  const renderExpense = (expense) => {
+    // console.log(filteredByDate);
+    // console.log(expense.id);
+
+    if (filteredByDate.length === 0 && isChecked.length === 0) {
+      if (!dateFilter) {
+        return <ExpenseRow expense={expense} />;
+      }
+      return;
+    } else if (
+      filteredByDate.length === 0 &&
+      isChecked.includes(expense.category)
+    ) {
+      return <ExpenseRow expense={expense} />;
+    } else if (isChecked.length === 0 && filteredByDate.includes(expense)) {
+      return <ExpenseRow expense={expense} />;
+    } else {
+      return (
+        filteredByDate.includes(expense) &&
+        isChecked.includes(expense.category) && <ExpenseRow expense={expense} />
+      );
+    }
+  };
 
   if (width >= MEDIUM_SCREEN_SIZE) {
     return (
@@ -34,30 +62,7 @@ const ExpensesList = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {expenses.map((expense) =>
-              // filteredByDate.length === 0 && isChecked.length === 0 ? (
-              //   <ExpenseRow expense={expense} />
-              // ) : (
-              //   filteredByDate.includes(expense.id) && isChecked.lenght === 0 ? (
-              //     <ExpenseRow expense={expense} />
-              //   )
-              // )
-              // filteredByDate.length > 0 ? (
-              //   filteredByDate.includes(expense.date) && (
-              //     <ExpenseRow expense={expense} />
-              //   )
-              // ) : (
-              //   <ExpenseRow expense={expense} />
-              // )
-
-              isChecked.length === 0 ? (
-                <ExpenseRow expense={expense} />
-              ) : (
-                isChecked.includes(expense.category) && (
-                  <ExpenseRow expense={expense} />
-                )
-              )
-            )}
+            {expenses.map((expense) => renderExpense(expense))}
           </TableBody>
           <TableFooter>
             <TableRow>
