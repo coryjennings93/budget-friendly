@@ -19,6 +19,8 @@ module.exports = {
     extend: {
       colors: {
         teal2: "rgb(55, 113, 110)",
+        teal2darker: "rgb(45, 94, 91)",
+        offwhite: "rgb(249,249,249)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
