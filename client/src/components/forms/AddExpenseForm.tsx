@@ -32,10 +32,17 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useExpensesDemo } from "@/context";
 import LogoIcon from "../icons/LogoIcon";
+import AddCategory from "../shared/AddCategory";
+import { useState } from "react";
 
 const AddExpenseForm = () => {
   const { categories, expenses, addExpense } = useExpensesDemo();
   const categoriesList = categories.map((category: string) => category.name);
+
+  // check to see if the AddCategory Dialog form is open and prevent the onSubmit behavior of this form
+  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+  // pass this function handler down through props to the AddCategory component to control above state based on if the AddCategory Dialog form is open or closed
+  const handleIsOpen = () => setIsAddCategoryOpen(!isAddCategoryOpen);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof AddExpenseValidation>>({
@@ -49,7 +56,7 @@ const AddExpenseForm = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof AddExpenseValidation>) {
+  function onSubmit(values: z.infer<typeof AddExpenseValidation>, e) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     try {
@@ -71,7 +78,7 @@ const AddExpenseForm = () => {
         <LogoIcon width="w-24" />
 
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={!isAddCategoryOpen && form.handleSubmit(onSubmit)}
           className="flex flex-col w-full gap-3 mt-4"
         >
           <div className="flex flex-col mt-2 sm:flex-wrap sm:flex-row">
@@ -149,18 +156,23 @@ const AddExpenseForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a Category" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categoriesList.map((category: string) => (
-                      <SelectItem value={category}>{category}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-1 ">
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a Category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categoriesList.map((category: string) => (
+                        <SelectItem value={category}>{category}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div onClick={() => console.log()}>
+                    <AddCategory handleIsOpen={handleIsOpen} />
+                  </div>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -191,7 +203,7 @@ const AddExpenseForm = () => {
             {form.formState.isSubmitting ? "Adding..." : "Add"}
           </Button>
           {form.formState.errors.root && (
-            <div className="text-red-500">
+            <div className="text-sm font-medium text-red-500">
               {form.formState.errors.root.message}
             </div>
           )}

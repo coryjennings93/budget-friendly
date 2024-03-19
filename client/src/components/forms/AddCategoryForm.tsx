@@ -27,9 +27,14 @@ const AddCategoryForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof AddCategoryValidation>) {
-    addCategory(values);
-    form.reset();
-    
+    try {
+      addCategory(values);
+      form.reset();
+    } catch (error) {
+      form.setError("root", {
+        message: "There was an error saving your expense. Please try again.",
+      });
+    }
   }
 
   return (
@@ -47,11 +52,22 @@ const AddCategoryForm = () => {
               <FormDescription>
                 This category will be added to your list of categories.
               </FormDescription>
+              {form.formState.errors.root && (
+                <div className="text-sm font-medium text-red-500">
+                  {form.formState.errors.root.message}
+                </div>
+              )}
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button
+          disabled={form.formState.isSubmitting}
+          type="submit"
+          className="mt-6 text-lg"
+        >
+          {form.formState.isSubmitting ? "Adding..." : "Add"}
+        </Button>
       </form>
     </Form>
   );

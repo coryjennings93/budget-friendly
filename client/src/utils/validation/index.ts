@@ -19,6 +19,7 @@ getCategories();
  
 // ------------Validation Schemas----------------
 export const SignupValidation = z.object({
+  name: z.string().min(2, {message: 'Name must be at least 2 characters.'}).max(45, {message: 'Name cannot be over 45 characters.'}),
   email: z.string().email({message: "Invalid email."}),
   password: z.string().min(6, {message: 'Password must be at least 6 characters.'}).max(15, {message: 'Password cannot be over 15 characters.'}),
   confirmPassword: z.string().min(6, {message: 'Password must be at least 6 characters.'}).max(15, {message: 'Password cannot be over 15 characters.'})

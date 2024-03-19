@@ -20,6 +20,7 @@ const SignupForm = () => {
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -30,6 +31,24 @@ const SignupForm = () => {
   function onSubmit(values: z.infer<typeof SignupValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    try {
+      fetch("http://localhost:4000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+    form.reset();
   }
   return (
     <Form {...form}>
@@ -45,6 +64,19 @@ const SignupForm = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col w-full gap-3 mt-4"
         >
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name:</FormLabel>
+                <FormControl>
+                  <Input placeholder="First Last" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"

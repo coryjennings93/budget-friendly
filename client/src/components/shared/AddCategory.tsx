@@ -11,9 +11,9 @@ import { Button } from "../ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
-const AddCategory = () => {
+const AddCategory = ({ handleIsOpen }) => {
   return (
-    <Dialog>
+    <Dialog onOpenChange={handleIsOpen}>
       <DialogTrigger asChild>
         <Button title="add category">
           <FontAwesomeIcon icon={faPlus} />

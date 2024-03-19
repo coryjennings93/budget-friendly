@@ -19,9 +19,10 @@ const Home = () => {
             </h2>
             <p className="text-lg md:text-center">
               Are you tired of overspending and constantly feeling stressed
-              about your finances? Look no further! Budget Friendly is here to
-              revolutionize the way you manage your money. With our intuitive
-              app, you'll take control of your finances like never before.
+              about your finances? Would you like to be happy with the money you
+              do have? Look no further! Budget Friendly is here to revolutionize
+              the way you manage your money. With our intuitive app, you'll take
+              control of your finances like never before.
             </p>
             <p className="mt-4 text-lg md:text-center">
               Click the Demo button below to try the app out with some sample
@@ -128,6 +129,10 @@ const Home = () => {
         />
         <div>
           <h1>Join Thousands of Satified Users Today!</h1>
+          <p>
+            Picture the joy of dining out, without the constant concern of
+            checking your finances beforehand.
+          </p>
           <p>
             Ready to take control of your finances and start saving money? Sign
             up for Budget Friendly now and experience the difference for

@@ -45,6 +45,14 @@ To explore where I currently am in the development process, you can intereat wit
 2. Run `npm install` to install dependencies.
 3. Run `npm run dev` to start the development server (built with Vite).
 
+## :world_map: Database Schema
+
+![Database Schema](/extras/budgetFriendlyDatabaseSchema.png)
+
+- You can use this schema to replicate the Postgresql database.
+- None of the fields should allow for NULL values.
+- The isChecked value should be a boolean and initially set to false.
+
 Feel free to contribute to the project or provide feedback to enhance its functionality and usability.
 
 PS: This is an updated version of an older project I had started a couple years back.
