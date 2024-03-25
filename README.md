@@ -39,11 +39,21 @@ The project is structured into two separate folders:
 
 ## 🚀 Getting Started
 
-To explore where I currently am in the development process, you can intereat with the frontend of the project and demo its features:
+To explore where I currently am in the development process, you can interact with the frontend of the project and demo its features:
 
 1. Clone the `client` folder.
 2. Run `npm install` to install dependencies.
 3. Run `npm run dev` to start the development server (built with Vite).
+
+Or, you can also run the server and see how the Sign Up form works:
+
+1. Clone the entire project
+2. Move into the `client` directory, run `npm install`, then start Vite server with `npm run dev`.
+3. Move into the `server` directory, run `npm install`, then start Express server with `npm run dev`.
+4. Set up Postgres Database:
+   - Make sure you have Postgres installed locally on your computer.
+   - Create a new database called `budget_friendly`.
+   - You can run the queries in the `extras/createTables.sql` file to set up the database infrastructure.
 
 ## :world_map: Database Schema
 
