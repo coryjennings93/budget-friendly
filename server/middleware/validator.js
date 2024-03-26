@@ -6,7 +6,9 @@ const InvalidCredentialsError = require("../errors/InvalidCredentialsError");
 const isEmailInUse = async (email) => {
   const emailResult = await getEmail(email);
   if (emailResult.length > 0) {
-    throw new Error("Email already in use");
+    throw new InvalidCredentialsError(
+      "This email address is already registered."
+    );
   }
 };
 
@@ -20,12 +22,15 @@ const validEmail = async (email) => {
 const validPassword = async (password, { req }) => {
   const email = req.body.email;
   const user = await getEmail(email);
-  const validPassword = await bcrypt.compare(
-    password,
-    user[0].user_account_password
-  );
-  if (!validPassword) {
-    throw new InvalidCredentialsError("The password is incorrect.");
+  // only checks the password if the email is found
+  if (user.length !== 0) {
+    const validPassword = await bcrypt.compare(
+      password,
+      user[0].user_account_password
+    );
+    if (!validPassword) {
+      throw new InvalidCredentialsError("The password is incorrect.");
+    }
   }
 };
 

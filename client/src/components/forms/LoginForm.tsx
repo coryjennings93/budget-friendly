@@ -38,7 +38,7 @@ const LoginForm = () => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     try {
-      const response = await fetch("http://localhost:4000/login", {
+      const response = await fetch("/api/v1/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,6 +47,7 @@ const LoginForm = () => {
       });
       const json = await response.json();
       if (response.ok) {
+        console.log(json);
         setServerErrors(null);
         form.reset();
         navigate("/dashboard");
@@ -54,19 +55,20 @@ const LoginForm = () => {
         return;
       }
       if (json.errors) {
+        console.error(json.errors);
         setServerErrors(json.errors);
       } else {
         setServerErrors([
-          { msg: "An unexpected error has occured." },
-          { msg: "Please try again." },
+          { message: "An unexpected error has occured." },
+          { message: "Please try again." },
         ]);
       }
       return;
     } catch (error) {
       console.error(error);
       setServerErrors([
-        { msg: "An unexpected error has occured." },
-        { msg: "Please try again." },
+        { message: "An unexpected error has occured." },
+        { message: "Please try again." },
       ]);
     }
   }
@@ -77,7 +79,7 @@ const LoginForm = () => {
         <ul className="p-4 mb-6 font-bold bg-red-300 border-2 rounded-md border-slate-400">
           {serverErrors.map((error, key) => (
             <li className="list-disc list-inside" key={key}>
-              {error.msg}
+              {error.message}
             </li>
           ))}
         </ul>

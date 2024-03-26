@@ -8,7 +8,7 @@ const jwtTokens = (user_id, user_name, user_email) => {
     expiresIn: "15m",
   });
   const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "14d",
+    expiresIn: "10s",
   });
   return { accessToken, refreshToken };
 };

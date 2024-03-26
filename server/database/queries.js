@@ -1,4 +1,5 @@
 const InvalidCredentialsError = require("../errors/InvalidCredentialsError");
+const { comparePassword } = require("../utils/bcryptHelpers");
 const { pool } = require("./dbConfig");
 const bcrypt = require("bcrypt");
 
@@ -8,14 +9,6 @@ const getEmail = async (email) => {
     "SELECT * FROM user_account WHERE user_account_email = $1",
     [email]
   );
-  if (user.rows.length === 0) {
-    throw new InvalidCredentialsError("Email not found");
-  }
-  if (user.rows.length > 1) {
-    throw new InvalidCredentialsError(
-      "This email address is registered more than one. Please contact support."
-    );
-  }
   return user.rows;
 };
 
@@ -33,24 +26,24 @@ const addNewUser = async (name, email, password) => {
 };
 
 const getUser = async (email, password) => {
-  // make sure the user exists
-  await getEmail(email);
+  // gets the user row from the user_account table
+  const user = await getEmail(email);
 
-  // this checks to make sure the password is correct while also getting the user
-  const user = await pool.query(
-    "SELECT * FROM user_account WHERE user_account_email = $1",
-    [email]
-  );
+  if (user[0].length === 0 || user[0].length > 1) {
+    throw new InvalidCredentialsError(
+      "Error with account email registration. Contact customer support."
+    );
+  }
 
   // Compare the hashed password stored in the database with the hashed password provided by the user
-  const isPasswordValid = await bcrypt.compare(
+  const isPasswordValid = comparePassword(
     password,
-    user.rows[0].user_account_password
+    user[0].user_account_password
   );
   if (!isPasswordValid) {
     throw new InvalidCredentialsError("The password is incorrect.");
   }
-  return user.rows[0];
+  return user[0];
 };
 
 const getTransactions = async (user_id) => {
