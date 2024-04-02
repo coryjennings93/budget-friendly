@@ -1,9 +1,10 @@
-const router = require("./routes");
+const routes = require("./routes");
 const express = require("express");
 const cors = require("cors");
 const errorHandler = require("./middleware/errorHandler");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
+const transactionRoutes = require("./routes/transactions");
 
 const app = express();
 
@@ -17,11 +18,13 @@ app.use(express.json());
 app.use(
   cors({
     origin: process.env.FRONT_END_URL,
+    credentials: true,
   })
 );
 
 // Use the router
-app.use("/api/v1/", router);
+app.use("/api/v1/", routes);
+app.use("/api/v1/transactions", transactionRoutes);
 
 // call for all requests that don't match the routes
 app.all("*", (req, res) => {

@@ -4,7 +4,9 @@ const errorHandler = (err, req, res, next) => {
   console.error(err);
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
+  err.message = err.message || "Something went wrong";
 
+  // this is only for processing and formatting the express-validator validation errors
   if (err instanceof ValidationError) {
     console.log(err.error);
     const reformatedErrorArray = err.error.map((error) => {

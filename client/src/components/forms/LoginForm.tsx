@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { LoginValidation } from "@/utils/validation";
+import { JwtPayload, jwtDecode } from "jwt-decode";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,13 +16,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const LoginForm = () => {
   const [serverErrors, setServerErrors] = useState(null);
   const navigate = useNavigate();
-
+  const { setUser } = useAuth();
   useEffect(() => {
-    console.log(serverErrors);
+    console.log("serverErrors: ", serverErrors);
   }, [serverErrors]);
 
   // 1. Define your form.
@@ -37,31 +39,57 @@ const LoginForm = () => {
   async function onSubmit(values: z.infer<typeof LoginValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    if (
+      values.email === "email@example.com" &&
+      values.password === "password"
+    ) {
+      form.reset();
+      navigate("/demo");
+      return;
+    }
     try {
-      const response = await fetch("/api/v1/login", {
+      const response = await fetch("http://localhost:4000/api/v1/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
       });
-      const json = await response.json();
+
       if (response.ok) {
+        const json = await response.json();
         console.log(json);
+        const accessToken = json.accessToken;
+
+        // define user
+        const decoded = jwtDecode<JwtPayload>(accessToken);
+        console.log("decoded Token: ", decoded);
+        const createUser = {
+          id: decoded.user_account_id,
+          name: decoded.user_account_name,
+          email: decoded.user_account_email,
+        };
+        setUser(createUser);
+
         setServerErrors(null);
         form.reset();
         navigate("/dashboard");
 
+        if (json.errors) {
+          console.error(json.errors);
+          setServerErrors(json.errors);
+        } else {
+          setServerErrors([
+            { message: "An unexpected error has occured." },
+            { message: "Please try again." },
+          ]);
+        }
         return;
-      }
-      if (json.errors) {
-        console.error(json.errors);
-        setServerErrors(json.errors);
       } else {
-        setServerErrors([
-          { message: "An unexpected error has occured." },
-          { message: "Please try again." },
-        ]);
+        const json = await response.json();
+        console.error(json);
+        setServerErrors(json.errors);
       }
       return;
     } catch (error) {

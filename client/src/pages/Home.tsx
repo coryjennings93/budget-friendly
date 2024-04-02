@@ -3,12 +3,13 @@ import { SITE_NAME } from "../utils/constants";
 import { Link } from "react-router-dom";
 import LogoIcon from "@/components/icons/LogoIcon";
 import NavBar from "@/components/shared/NavBar";
+import HomeNavbar from "@/components/homePage/HomeNavbar";
 
 const Home = () => {
   return (
     <>
       <div className="min-h-screen text-teal2darker bg-[url('../src/assets/img/abstract-background.jpg')] bg-no-repeat  ">
-        <NavBar />
+        <HomeNavbar />
         <div className="flex flex-col gap-10 p-6 md:p-24 lg:px-52 md:flex-row">
           <div className="flex flex-col items-center justify-center xl:basis-2/3 md:basis-1/2">
             <h1 className="pb-2 text-center md:text-4xl gradient-text 2xl:text-5xl">
@@ -146,6 +147,10 @@ const Home = () => {
         </div>
       </section>
       <footer className="bg-sky-900">
+        <Link to="">Privacy Policy</Link>
+        <Link to="">Terms of Service</Link>
+        <p>© 2024 Budget Tracker</p>
+
         <h3>Smiling Calculator:</h3>
         <p>
           <a

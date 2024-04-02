@@ -45,6 +45,11 @@ To explore where I currently am in the development process, you can interact wit
 2. Run `npm install` to install dependencies.
 3. Run `npm run dev` to start the development server (built with Vite).
 
+You can also log in to see the updated dashboard that authenticated users would see with the following credentials:
+
+- email@example.com
+- password
+
 Or, you can also run the server and see how the Sign Up form works:
 
 1. Clone the entire project

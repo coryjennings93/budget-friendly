@@ -1,3 +1,4 @@
+const AuthenticationError = require("../errors/AuthenticationError");
 const InvalidCredentialsError = require("../errors/InvalidCredentialsError");
 const { comparePassword } = require("../utils/bcryptHelpers");
 const { pool } = require("./dbConfig");
@@ -46,6 +47,15 @@ const getUser = async (email, password) => {
   return user[0];
 };
 
+const findUserById = async (id) => {
+  const user = await pool.query(
+    "SELECT * FROM user_account WHERE user_account_id = $1",
+    [id]
+  );
+
+  return user;
+};
+
 const getTransactions = async (user_id) => {
   const transactions = await pool.query(
     "SELECT * FROM transaction WHERE user_account_id = $1",
@@ -54,4 +64,44 @@ const getTransactions = async (user_id) => {
   return transactions;
 };
 
-module.exports = { getEmail, addNewUser, getUser, getTransactions };
+const addRefreshToken = async (user_account_id, refresh_token) => {
+  await pool.query(
+    "INSERT INTO refresh_token (user_account_id, refresh_token) VALUES ($1, $2)",
+    [user_account_id, refresh_token]
+  );
+};
+
+const getRefreshToken = async (refreshToken) => {
+  const refreshTokenRecords = await pool.query(
+    "SELECT * FROM refresh_token WHERE refresh_token = $1",
+    [refreshToken]
+  );
+  return refreshTokenRecords;
+};
+
+// check to see if user_account_id is in the refresh_token table
+const checkRefreshTokenByUserId = async (user_account_id) => {
+  const refreshTokenRecords = await pool.query(
+    "SELECT * FROM refresh_token WHERE user_account_id = $1",
+    [user_account_id]
+  );
+  return refreshTokenRecords;
+};
+
+const deleteRefreshToken = async (refreshToken) => {
+  await pool.query("DELETE FROM refresh_token WHERE refresh_token = $1", [
+    refreshToken,
+  ]);
+};
+
+module.exports = {
+  getEmail,
+  addNewUser,
+  getUser,
+  findUserById,
+  getTransactions,
+  addRefreshToken,
+  deleteRefreshToken,
+  getRefreshToken,
+  checkRefreshTokenByUserId,
+};
