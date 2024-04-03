@@ -1,25 +1,41 @@
-import { MEDIUM_SCREEN_SIZE, SITE_NAME } from "../../utils/constants";
-import LogoIcon from "../icons/LogoIcon";
-import LogoutButton from "./buttons/LogoutButton";
-import ProfileIcon from "../icons/ProfileIcon";
 import { Link } from "react-router-dom";
-import { useViewport } from "@/hooks/useViewport";
-import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useViewport } from "../../hooks/useViewport";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faUser, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { MEDIUM_SCREEN_SIZE, SITE_NAME } from "@/utils/constants";
+import LogoIcon from "../icons/LogoIcon";
+import { useAuth } from "@/context/AuthContext";
+import LogoutButton from "../shared/buttons/LogoutButton";
+import ProfileIcon from "../icons/ProfileIcon";
 
-const Header = () => {
+const DashboardHeader = ({
+  getHeight,
+}: {
+  getHeight: (height: number) => void;
+}) => {
   const { width } = useViewport();
   const [showMenu, setShowMenu] = useState(false);
   const { user } = useAuth();
+
+  // this is for getting the height of the navbar
+  // I want to get the height to pass to the dashboard so that the dashboard can adjust its height
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const headerHeight = headerRef.current.offsetHeight;
+    getHeight(headerHeight);
+  }, [getHeight]);
 
   const showNav = () => {
     setShowMenu(!showMenu);
   };
 
   return (
-    <div className="flex items-center justify-between p-2 pr-10 py-4 text-teal2darker bg-[url('../src/assets/img/abstract-background.jpg')]">
+    <div
+      className="flex items-center justify-between p-2 pr-10 text-teal2darker bg-[url('../src/assets/img/abstract-background.jpg')]"
+      ref={headerRef}
+    >
       <Link to="/">
         <div className="flex">
           <LogoIcon width="w-14" />
@@ -81,9 +97,6 @@ const Header = () => {
         </div>
       ) : (
         <div className="">
-          <Link to="/" className="pb-2 mx-3 text-lg font-bold hover_effect">
-            Home
-          </Link>
           {user ? (
             <>
               <LogoutButton />
@@ -94,18 +107,9 @@ const Header = () => {
             </>
           ) : (
             <>
-              <Link
-                to="/login"
-                className="pb-2 mx-3 text-lg font-bold hover_effect"
-              >
-                Log In
-              </Link>
-              <Link
-                to="/signup"
-                className="pb-2 mx-3 text-lg font-bold hover_effect"
-              >
-                Create Account
-              </Link>
+              <Link to="/">Home</Link>
+              <Link to="/login">Log In</Link>
+              <Link to="/signup">Create Account</Link>
             </>
           )}
         </div>
@@ -114,4 +118,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default DashboardHeader;

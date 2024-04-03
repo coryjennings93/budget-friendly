@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { MEDIUM_SCREEN_SIZE, SITE_NAME } from "@/utils/constants";
 
-const UnauthenticatedNavBar = () => {
+const DemoNavBar = () => {
   const { width } = useViewport();
   const [showMenu, setShowMenu] = useState(false);
 
@@ -89,4 +89,4 @@ const UnauthenticatedNavBar = () => {
   );
 };
 
-export default UnauthenticatedNavBar;
+export default DemoNavBar;

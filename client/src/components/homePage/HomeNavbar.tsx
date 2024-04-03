@@ -62,6 +62,21 @@ const HomeNavbar = () => {
                     Home
                   </button>
                 </Link>
+                <Link to="">
+                  <button className="w-48 px-4 py-2 m-2 font-bold border-2 rounded-full hover:text-white hover:bg-sky-700 border-sky-800 ">
+                    About
+                  </button>
+                </Link>
+                <Link to="">
+                  <button className="w-48 px-4 py-2 m-2 font-bold border-2 rounded-full hover:text-white hover:bg-sky-700 border-sky-800 ">
+                    Contact
+                  </button>
+                </Link>
+                <Link to="/demo">
+                  <button className="w-48 px-4 py-2 m-2 font-bold border-2 rounded-full hover:text-white hover:bg-sky-700 border-sky-800 ">
+                    Demo
+                  </button>
+                </Link>
                 <Link to="/login">
                   <button className="w-48 px-4 py-2 m-2 font-bold border-2 rounded-full hover:text-white hover:bg-sky-700 border-sky-800 ">
                     Log In
@@ -77,23 +92,47 @@ const HomeNavbar = () => {
           )}
         </div>
       ) : (
-        <div className="p-4 ml-auto ">
+        <div className="m-4 ml-auto rounded-lg shadow shadow-slate-600">
+          <Link to="/">
+            {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
+              Demo
+            </button> */}
+            <span className="inline-block p-4 text-2xl rounded-l-lg w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
+              Home
+            </span>
+          </Link>
+          <Link to="">
+            {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
+              Demo
+            </button> */}
+            <span className="inline-block p-4 text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
+              About
+            </span>
+          </Link>
+          <Link to="">
+            {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
+              Demo
+            </button> */}
+            <span className="inline-block p-4 text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
+              Contact
+            </span>
+          </Link>
+          <Link to="/demo">
+            {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
+              Demo
+            </button> */}
+            <span className="inline-block p-4 text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
+              Demo
+            </span>
+          </Link>
           {user ? (
             <Link to="/dashboard">
-              <span className="inline-block p-4 text-2xl w-30 text-offwhite hover:underline bg-rose-500 hover:bg-rose-700">
+              <span className="inline-block p-4 text-2xl rounded-r-lg w-30 text-offwhite hover:underline bg-rose-500 hover:bg-rose-700">
                 Account
               </span>
             </Link>
           ) : (
             <>
-              <Link to="/login">
-                {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded md:mr-4 bg-amber-500 hover:bg-amber-600">
-              Log In
-            </button> */}
-                <span className="inline-block p-4 text-2xl rounded-l-lg w-30 text-offwhite hover:underline bg-amber-500 hover:bg-amber-600">
-                  Log In
-                </span>
-              </Link>
               <Link to="/signup">
                 {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded md:mr-4 bg-lime-500 hover:bg-lime-700">
               Sign Up
@@ -102,17 +141,16 @@ const HomeNavbar = () => {
                   Sign Up
                 </span>
               </Link>
+              <Link to="/login">
+                {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded rounded-l-lg md:mr-4 bg-amber-500 hover:bg-amber-600">
+              Log In
+            </button> */}
+                <span className="inline-block p-4 text-2xl rounded-r-lg w-30 text-offwhite hover:underline bg-amber-500 hover:bg-amber-600">
+                  Log In
+                </span>
+              </Link>
             </>
           )}
-
-          <Link to="/demo">
-            {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
-              Demo
-            </button> */}
-            <span className="inline-block p-4 text-2xl rounded-r-lg w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
-              Demo
-            </span>
-          </Link>
         </div>
       )}
     </div>

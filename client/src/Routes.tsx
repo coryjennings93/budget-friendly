@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import RequireAuth from "./components/shared/RequireAuth";
 import { useAuth } from "./context/AuthContext";
+import ImageCredit from "./pages/ImageCredit";
 
 const Layout = () => {
   return <div></div>;
@@ -32,6 +33,10 @@ const Routes = () => {
       {
         path: "/demo",
         element: <Demo />,
+      },
+      {
+        path: "/credit",
+        element: <ImageCredit />,
       },
       {
         path: "/signup",

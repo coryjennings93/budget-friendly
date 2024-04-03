@@ -2,8 +2,8 @@
 import { SITE_NAME } from "../utils/constants";
 import { Link } from "react-router-dom";
 import LogoIcon from "@/components/icons/LogoIcon";
-import NavBar from "@/components/shared/NavBar";
 import HomeNavbar from "@/components/homePage/HomeNavbar";
+import Footer from "@/components/shared/Footer";
 
 const Home = () => {
   return (
@@ -41,7 +41,7 @@ const Home = () => {
               </button>
             </Link> */}
             <Link to="/demo">
-              <button className="w-56 h-12 px-4 py-2 mt-10 text-lg font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
+              <button className="w-56 h-12 px-4 py-2 mt-10 text-lg font-bold text-white rounded shadow bg-emerald-500 hover:bg-emerald-700">
                 Demo
               </button>
             </Link>
@@ -140,40 +140,13 @@ const Home = () => {
             yourself. Your wallet will thank you!
           </p>
           <Link to="/signup">
-            <button className="w-48 h-12 px-4 py-2 mt-8 font-bold rounded md:mx-auto md:block text-offwhite bg-rose-400 hover:bg-rose-700">
+            <button className="w-48 h-12 px-4 py-2 mt-8 font-bold rounded shadow md:mx-auto md:block text-offwhite bg-rose-400 hover:bg-rose-700">
               Sign Up
             </button>
           </Link>
         </div>
       </section>
-      <footer className="bg-sky-900">
-        <Link to="">Privacy Policy</Link>
-        <Link to="">Terms of Service</Link>
-        <p>© 2024 Budget Tracker</p>
-
-        <h3>Smiling Calculator:</h3>
-        <p>
-          <a
-            href="https://www.flaticon.com/free-stickers/people"
-            title="people stickers"
-          >
-            People stickers created by Stickers - Flaticon
-          </a>
-        </p>
-        <h3>Satisfied Person Image:</h3>
-        <a
-          href="https://www.flaticon.com/free-icons/satisfaction"
-          title="satisfaction icons"
-        >
-          Satisfaction icons created by Freepik - Flaticon
-        </a>
-        <h3>Landing Page Background Image:</h3>
-        <p>
-          <a href="https://www.vecteezy.com/free-photos/landing-page-background">
-            Landing Page Background Stock photos by Vecteezy
-          </a>
-        </p>
-      </footer>
+      <Footer />
     </>
   );
 };

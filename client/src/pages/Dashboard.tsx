@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import useRefreshToken from "@/hooks/useRefreshToken";
 import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
-import NavBar from "@/components/shared/NavBar";
 import ExpensesCompleteTable from "@/components/shared/ExpensesCompleteTable";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useViewport } from "@/hooks/useViewport";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -29,26 +29,27 @@ const Dashboard = () => {
 
   return (
     <div className="">
-      <NavBar getHeight={handleNavBarHeight} />
+      <DashboardHeader getHeight={handleNavBarHeight} />
       <div
         className="grid grid-cols-[minmax(0px,_1fr)_300px]"
         style={{ minHeight: remainingHeight }}
       >
         <div>
-          <section></section>
-          {user && <h2>Hi {user.name}!</h2>}
-          {/* <Button onClick={() => refresh()}>Refresh Token</Button>
+          <section>
+            {user && <h2>Hi {user.name}!</h2>}
+            {/* <Button onClick={() => refresh()}>Refresh Token</Button>
       <LogoutButton /> */}
-          <section>
-            <div>
-              <div>budgetSelector</div>
-            </div>
-          </section>
-          <section>
-            <div>PieChart</div>
-          </section>
-          <section>
-            <Transactions />
+            <section className="grid grid-cols-2">
+              <article>
+                <Button>Budget</Button>
+              </article>
+              <article>
+                <div className="bg-rose-500 w-100 h-100">piechart</div>
+              </article>
+              <article className="col-span-2">
+                <Transactions />
+              </article>
+            </section>
           </section>
         </div>
         <div className=" bg-slate-500">

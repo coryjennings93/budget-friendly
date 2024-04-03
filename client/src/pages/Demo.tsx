@@ -1,11 +1,11 @@
-import Header from "../components/shared/Header";
 import ExpensesCompleteTable from "../components/shared/ExpensesCompleteTable";
+import DemoHeader from "@/components/demo/DemoHeader";
 
 const Demo = () => {
   return (
     <div className="solid-bg">
       <div className="pb-4 radial-bg">
-        <Header />
+        <DemoHeader />
       </div>
       <ExpensesCompleteTable />
     </div>
