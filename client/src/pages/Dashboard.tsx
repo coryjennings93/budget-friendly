@@ -13,7 +13,6 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const refresh = useRefreshToken();
   const { height } = useViewport();
 
   const [navBarHeight, setNavBarHeight] = useState(null);
@@ -37,8 +36,8 @@ const Dashboard = () => {
         <div>
           <section>
             {user && <h2>Hi {user.name}!</h2>}
-            {/* <Button onClick={() => refresh()}>Refresh Token</Button>
-      <LogoutButton /> */}
+
+            <LogoutButton />
             <section className="grid grid-cols-2">
               <article>
                 <Button>Budget</Button>

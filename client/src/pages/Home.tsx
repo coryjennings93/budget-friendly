@@ -4,10 +4,19 @@ import { Link } from "react-router-dom";
 import LogoIcon from "@/components/icons/LogoIcon";
 import HomeNavbar from "@/components/homePage/HomeNavbar";
 import Footer from "@/components/shared/Footer";
+import { useEffect } from "react";
+import { axiosAuthInstance } from "@/api/axios";
+import { Button } from "@/components/ui/button";
 
 const Home = () => {
+  const test = async () => {
+    const response = await axiosAuthInstance.get("api/v1/test");
+    console.log("Response: ", response);
+  };
+
   return (
     <>
+      <Button onClick={test}>test</Button>
       <div className="min-h-screen text-teal2darker bg-[url('../src/assets/img/abstract-background.jpg')] bg-no-repeat  ">
         <HomeNavbar />
         <div className="flex flex-col gap-10 p-6 md:p-24 lg:px-52 md:flex-row">

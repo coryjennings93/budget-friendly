@@ -8,7 +8,8 @@ const authenticateToken = async (req, res, next) => {
     // const accessToken = req.cookies.access_token;
     // const authHeader = req.headers["authorization"];
     // const accessToken = authHeader && authHeader.split(" ")[1];
-    const accessToken = req.cookie.access_token;
+    console.log("req.cookies: ", req.cookies);
+    const accessToken = req.cookies.access_token;
     if (!accessToken) throw new AuthenticationError("Null access token", 401);
 
     //get refreshToken from cookie
@@ -20,7 +21,7 @@ const authenticateToken = async (req, res, next) => {
       );
     }
 
-    // check to see if the provided refreshToken from cookies s found in the refresh_token table
+    // check to see if the provided refreshToken from cookies is found in the refresh_token table
     const refreshTokenInDB = await getRefreshToken(refreshToken);
     if (
       refreshTokenInDB.rows.length === 0 ||

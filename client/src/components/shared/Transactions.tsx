@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
 import AddCategory from "./AddCategory";
 import AddExpense from "./AddExpense";
@@ -5,8 +6,10 @@ import CategoriesDropdown from "./CategoriesDropdown";
 import DeleteCategoryButton from "./DeleteCategoryButton";
 import ExpensesList from "./ExpensesList";
 import FilterByDateButton from "./FilterByDateButton";
+import TransactionList from "./TransactionList";
 
 const Transactions = () => {
+  const { user } = useAuth();
   return (
     <div className="flex flex-col">
       <div className="flex justify-center">
@@ -29,7 +32,7 @@ const Transactions = () => {
           </div>
         </div>
       </div>
-      <ExpensesList />
+      {user ? <TransactionList /> : <ExpensesList />}
     </div>
   );
 };

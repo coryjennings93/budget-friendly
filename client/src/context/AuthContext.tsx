@@ -6,6 +6,7 @@ const AuthContext = createContext({});
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState(null);
 
   useEffect(() => {
     console.log("AuthContextProvider User: ", user);
@@ -29,6 +30,7 @@ export const AuthContextProvider = ({ children }) => {
         })
         .then((data) => {
           if (data.accessToken) {
+            setAccessToken(data.accessToken);
             const decoded = jwtDecode<JwtPayload>(data.accessToken);
             const createUser = {
               id: decoded.user_account_id,
@@ -169,7 +171,9 @@ export const AuthContextProvider = ({ children }) => {
   // }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logoutUser }}>
+    <AuthContext.Provider
+      value={{ user, setUser, logoutUser, accessToken, setAccessToken }}
+    >
       {loading ? null : children}
       {/* {children} */}
     </AuthContext.Provider>

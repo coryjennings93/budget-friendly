@@ -10,6 +10,7 @@ const {
   getTransactions,
   findUserById,
   deleteRefreshToken,
+  getRefreshToken,
 } = require("./database/queries");
 const jwt = require("jsonwebtoken");
 const errorHandler = require("./middleware/errorHandler");
@@ -28,6 +29,13 @@ const { hashPassword, comparePassword } = require("./utils/bcryptHelpers");
 // const app = express();
 
 const router = express.Router();
+
+router.route("/test").get(
+  tryCatch(async (req, res, next) => {
+    res.json({ message: "Test route" });
+    console.log("Test was hit");
+  })
+);
 
 router.route("/users").get(
   tryCatch(async (req, res, next) => {
@@ -112,6 +120,15 @@ router.route("/refresh_token").get(
         401
       );
 
+    // check to make sure refresh token is found in database
+    const refreshTokenInDB = await getRefreshToken(refreshToken);
+    if (
+      refreshTokenInDB.rows.length === 0 ||
+      refreshTokenInDB.rows.length > 1
+    ) {
+      throw new AuthenticationError("Invalid refresh token", 401);
+    }
+
     let decodedPayload;
     try {
       decodedPayload = jwt.verify(
@@ -121,6 +138,8 @@ router.route("/refresh_token").get(
     } catch (error) {
       if (error.name === "TokenExpiredError") {
         res.clearCookie("refresh_token");
+        // delete token from database
+        await deleteRefreshToken(refreshToken);
         throw new AuthenticationError("Refresh token has expired", 401);
       }
       res.clearCookie("refresh_token");
@@ -146,7 +165,9 @@ router.route("/refresh_token").get(
     const user_account_record = user_account_records.rows[0];
 
     // check if the token needs to be refreshed
+    res.clearCookie("access_token");
     let { accessToken } = generateJWTTokens(user_account_record);
+    res.cookie("access_token", accessToken, { httpOnly: true });
     res.status(200).json({
       accessToken,
     });

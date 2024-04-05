@@ -1,5 +1,6 @@
 const AuthenticationError = require("../errors/AuthenticationError");
 const InvalidCredentialsError = require("../errors/InvalidCredentialsError");
+const QueryError = require("../errors/QueryError");
 const { comparePassword } = require("../utils/bcryptHelpers");
 const { pool } = require("./dbConfig");
 const bcrypt = require("bcrypt");
@@ -56,14 +57,6 @@ const findUserById = async (id) => {
   return user;
 };
 
-const getTransactions = async (user_id) => {
-  const transactions = await pool.query(
-    "SELECT * FROM transaction WHERE user_account_id = $1",
-    [user_id]
-  );
-  return transactions;
-};
-
 const addRefreshToken = async (user_account_id, refresh_token) => {
   await pool.query(
     "INSERT INTO refresh_token (user_account_id, refresh_token) VALUES ($1, $2)",
@@ -92,6 +85,43 @@ const deleteRefreshToken = async (refreshToken) => {
   await pool.query("DELETE FROM refresh_token WHERE refresh_token = $1", [
     refreshToken,
   ]);
+};
+
+// Transaction Queries
+const getTransactions = async (user_id) => {
+  const transactions = await pool.query(
+    "SELECT * FROM transaction WHERE user_account_id = $1",
+    [user_id]
+  );
+  return transactions;
+};
+
+const postTransaction = async (
+  user_id,
+  transaction_date,
+  transaction_description,
+  transaction_type,
+  category_id,
+  bank_account_id,
+  transaction_amount
+) => {
+  try {
+    await pool.query(
+      "INSERT INTO transaction (user_account_id, transaction_date, transaction_description, transaction_type, category_id, bank_account_id, transaction_amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      [
+        user_id,
+        transaction_date,
+        transaction_description,
+        transaction_type,
+        category_id,
+        bank_account_id,
+        transaction_amount,
+      ]
+    );
+    return;
+  } catch (e) {
+    throw new QueryError(e);
+  }
 };
 
 module.exports = {
