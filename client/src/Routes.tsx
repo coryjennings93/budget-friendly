@@ -14,6 +14,8 @@ import Dashboard from "./pages/Dashboard";
 import RequireAuth from "./components/shared/RequireAuth";
 import { useAuth } from "./context/AuthContext";
 import ImageCredit from "./pages/ImageCredit";
+import SiteLayout from "./components/layouts/SiteLayout";
+import SiteLayoutJustFooter from "./components/layouts/SiteLayoutJustFooter";
 
 const Layout = () => {
   return <div></div>;
@@ -32,7 +34,13 @@ const Routes = () => {
       },
       {
         path: "/demo",
-        element: <Demo />,
+        element: <SiteLayoutJustFooter />,
+        children: [
+          {
+            path: "/demo",
+            element: <Demo />,
+          },
+        ],
       },
       {
         path: "/credit",

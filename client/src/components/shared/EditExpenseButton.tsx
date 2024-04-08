@@ -27,6 +27,7 @@ const EditExpenseButton = ({ expense }) => {
     resolver: zodResolver(EditExpenseValidation),
     defaultValues: {
       id: expense.id,
+      type: expense.transactionType,
       date: undefined,
       cost: expense.cost.toString(),
       category: expense.category,

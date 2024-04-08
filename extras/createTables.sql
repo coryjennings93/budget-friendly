@@ -17,9 +17,11 @@ CREATE TABLE transaction (
 
 CREATE TABLE monthly_budget (
   monthly_budget_id serial PRIMARY KEY,
+  monthly_budget_date_created date NOT NULL DEFAULT CURRENT_DATE,
   monthly_budget_amount decimal NOT NULL,
   monthly_budget_month integer NOT NULL,
   monthly_budget_year integer NOT NULL,
+  user_account_id integer NOT NULL REFERENCES user_account(user_account_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE budget_by_category (
@@ -41,12 +43,14 @@ CREATE TABLE bank_account (
   bank_account_id serial PRIMARY KEY,
   bank_account_number integer NOT NULL
   bank_account_name text NOT NULL,
-  bank_account_balance decimal
+  bank_account_balance decimal,
+  user_account_id integer NOT NULL REFERENCES user_account(user_account_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE category (
   category_id serial PRIMARY KEY,
-  category_name text NOT NULL
+  category_name text NOT NULL,
+  user_account_id integer NOT NULL REFERENCES user_account(user_account_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
   
 CREATE TABLE refresh_token (

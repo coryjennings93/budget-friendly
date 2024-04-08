@@ -1,12 +1,17 @@
 import { TableCell, TableRow } from "../ui/table";
-import { currencyFormatter } from "@/utils/utils";
+import { currencyFormatter, dateFormatter } from "@/utils/utils";
 import DeleteExpenseButton from "./DeleteExpenseButton";
 import EditExpenseButton from "./EditExpenseButton";
 
 const ExpenseRow = ({ expense }) => {
+  if (typeof expense.date === "string") {
+    expense.date = new Date(expense.date);
+  }
   return (
     <TableRow key={expense.id}>
-      <TableCell className="font-medium">{expense.date}</TableCell>
+      <TableCell className="font-medium">
+        {dateFormatter(expense.date)}
+      </TableCell>
       <TableCell>{expense.category}</TableCell>
       <TableCell>{expense.transactionDescription}</TableCell>
       <TableCell className="text-right">

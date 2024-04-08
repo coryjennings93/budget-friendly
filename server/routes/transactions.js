@@ -2,6 +2,7 @@ const { getTransactions } = require("../database/queries");
 const { authenticateToken } = require("../middleware/authorization");
 const { tryCatch } = require("../utils/trycatch");
 const jwt = require("jsonwebtoken");
+const { addTransactionValidation } = require("../middleware/validator");
 
 const router = require("express").Router();
 

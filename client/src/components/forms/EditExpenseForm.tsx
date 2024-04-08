@@ -15,6 +15,7 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -42,6 +43,9 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
   const [transactionValue, setTransactionValue] = useState(
     expense.transactionDescription
   );
+  const [transactionTypeValue, setTransactionTypeValue] = useState(
+    expense.transactionType
+  );
   console.log(expense);
 
   /* Defining form and submit handler are taken care of in parent componet: EditExpenseButton
@@ -52,7 +56,9 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
   return (
     <Form {...form}>
       <div className="flex flex-col items-center justify-center">
-        <h2 className="mb-3 text-4xl font-bold gradient-text">Edit Expense</h2>
+        <h2 className="mb-3 text-4xl font-bold gradient-text">
+          Edit Transaction
+        </h2>
 
         <LogoIcon width="w-24" />
 
@@ -60,6 +66,41 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col w-full gap-3 mt-4"
         >
+          <div className="max-w-48">
+            <FormField
+              control={form.control}
+              name="transactionType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <div className="flex gap-1 ">
+                    <Select
+                      onValueChange={(value) => {
+                        value
+                          ? setTransactionTypeValue(value)
+                          : setTransactionTypeValue("");
+                        field.onChange(value);
+                      }}
+                      value={transactionTypeValue}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Expense or Income" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="Expense">Expense</SelectItem>
+                          <SelectItem value="Income">Income</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="id"

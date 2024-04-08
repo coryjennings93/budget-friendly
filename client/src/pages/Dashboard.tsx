@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useViewport } from "@/hooks/useViewport";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import SelectBudgetButton from "@/components/shared/buttons/SelectBudgetButton";
+import CreateBudgetForm from "@/components/shared/buttons/CreateBudgetButton";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -40,7 +42,8 @@ const Dashboard = () => {
             <LogoutButton />
             <section className="grid grid-cols-2">
               <article>
-                <Button>Budget</Button>
+                <SelectBudgetButton />
+                <CreateBudgetForm />
               </article>
               <article>
                 <div className="bg-rose-500 w-100 h-100">piechart</div>

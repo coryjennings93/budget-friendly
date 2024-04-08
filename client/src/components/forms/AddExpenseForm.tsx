@@ -18,6 +18,7 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -36,6 +37,7 @@ import AddCategory from "../shared/AddCategory";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
+import { formatCostBasedOnTransactionType } from "@/utils/utils";
 
 const AddExpenseForm = () => {
   const { categories, addExpense } = useExpensesDemo();
@@ -52,6 +54,7 @@ const AddExpenseForm = () => {
   const form = useForm<z.infer<typeof AddExpenseValidation>>({
     resolver: zodResolver(AddExpenseValidation),
     defaultValues: {
+      transactionType: undefined,
       date: undefined,
       cost: undefined,
       category: "",
@@ -63,8 +66,14 @@ const AddExpenseForm = () => {
   async function onSubmit(values: z.infer<typeof AddExpenseValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    console.log(values.transactionType);
+    values.cost = formatCostBasedOnTransactionType(
+      values.transactionType,
+      values.cost
+    );
+    console.log(values.cost);
+    return;
     try {
-      console.log(typeof values.date);
       if (!user) {
         addExpense(values);
         //   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -78,7 +87,7 @@ const AddExpenseForm = () => {
             date: values.date,
             cost: values.cost,
             category: values.category,
-            type: "expense", // "income" or "expense
+            type: values.transactionType,
             transactionDescription: values.transactionDescription,
             bank_account: "main",
           };
@@ -112,11 +121,14 @@ const AddExpenseForm = () => {
     <>
       {serverErrors && (
         <ul className="p-4 mb-6 font-bold bg-red-300 border-2 rounded-md border-slate-400">
-          {serverErrors.map((error, key) => (
-            <li className="list-disc list-inside" key={key}>
-              {error.message}
-            </li>
-          ))}
+          {serverErrors.map((error, key) => {
+            console.log(error);
+            return (
+              <li className="list-disc list-inside" key={key}>
+                {error.message}
+              </li>
+            );
+          })}
         </ul>
       )}
       <Form {...form}>

@@ -3,7 +3,7 @@ import DemoHeader from "@/components/demo/DemoHeader";
 
 const Demo = () => {
   return (
-    <div className="solid-bg">
+    <div className="pb-2 solid-bg">
       <div className="pb-4 radial-bg">
         <DemoHeader />
       </div>

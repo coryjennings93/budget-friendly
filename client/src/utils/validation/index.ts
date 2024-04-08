@@ -31,9 +31,10 @@ export const LoginValidation = z.object({
 
 
 export const AddExpenseValidation = z.object({
+  transactionType: z.string().min(1, {message: 'Please select a transaction type.'}),
   date: z.date({
     required_error: "A date of transaction is needed.",
-  }).transform((val) => val.toLocaleDateString("en-US")),
+  }),
   cost: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val),
   category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),
   transactionDescription: z.string()
@@ -41,9 +42,10 @@ export const AddExpenseValidation = z.object({
 
 export const EditExpenseValidation = z.object({
   id: z.string(),
+  transactionType: z.string().min(1, {message: 'Please select a transaction type.'}),
   date: z.date({
     required_error: "A date of transaction is needed.",
-  }).transform((val) => val.toLocaleDateString("en-US")),
+  }),
   cost: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val),
   category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),
   transactionDescription: z.string()

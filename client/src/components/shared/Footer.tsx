@@ -40,6 +40,9 @@ const Footer = () => {
               <h1 className="text-4xl text-[#93d1cc] text-center">
                 {SITE_NAME}
               </h1>
+              <p className="text-[#efe5ca]">
+                <i>"Your Wallet's Best Friend!"</i>
+              </p>
             </div>
           </div>
         </div>
