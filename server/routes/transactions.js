@@ -23,7 +23,11 @@ router
     authenticateToken,
     tryCatch(async (req, res, next) => {
       console.log("Request body: ", req.body);
-      // const userId = req.user.user_account_id;
+      // get user id from token
+      const payload = jwt.decode(req.cookies.access_token);
+
+      const userId = payload.user_account_id;
+      console.log("User ID: ", userId);
       // const transactions = await postTransaction(userId);
       // res.status(200).json(transactions.rows);
 

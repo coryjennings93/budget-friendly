@@ -5,6 +5,8 @@ const errorHandler = require("./middleware/errorHandler");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const transactionRoutes = require("./routes/transactions");
+const budgetRoutes = require("./routes/budgets");
+const categoryRoutes = require("./routes/categories");
 
 const app = express();
 
@@ -25,6 +27,8 @@ app.use(
 // Use the router
 app.use("/api/v1/", routes);
 app.use("/api/v1/transactions", transactionRoutes);
+app.use("/api/v1/budgets", budgetRoutes);
+app.use("/api/v1/categories", categoryRoutes);
 
 // call for all requests that don't match the routes
 app.all("*", (req, res) => {

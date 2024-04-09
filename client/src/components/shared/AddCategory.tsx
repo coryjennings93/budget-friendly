@@ -11,13 +11,23 @@ import { Button } from "../ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
-const AddCategory = ({ handleIsOpen }) => {
+const AddCategory = ({ handleIsOpen, fromCreateBudget }) => {
   return (
     <Dialog onOpenChange={handleIsOpen}>
       <DialogTrigger asChild>
-        <Button title="add category">
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
+        {fromCreateBudget ? (
+          <button
+            title="add category"
+            className="text-blue-900 hover:text-blue-500"
+          >
+            <FontAwesomeIcon icon={faPlus} />
+            <span className="ml-1">Create new category</span>
+          </button>
+        ) : (
+          <Button title="add category">
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className={"overflow-y-auto max-h-screen"}>
         <DialogHeader>

@@ -124,6 +124,55 @@ const postTransaction = async (
   }
 };
 
+// returns the user ID so that we can use it to insert into the budget_by_category table
+const postBudget = async ({
+  monthly_budget_amount,
+  monthly_budget_month,
+  monthly_budget_year,
+  user_account_id,
+  monthly_budget_name,
+}) => {
+  try {
+    const results = await pool.query(
+      "INSERT INTO monthly_budget (monthly_budget_amount, monthly_budget_month, monthly_budget_year, user_account_id, monthly_budget_name) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [
+        monthly_budget_amount,
+        monthly_budget_month,
+        monthly_budget_year,
+        user_account_id,
+        monthly_budget_name,
+      ]
+    );
+    return results.rows[0];
+  } catch (e) {
+    throw new QueryError(e);
+  }
+};
+
+const getCategory = async (category, user) => {
+  // capitalize first letter in case it is not
+  const category_name = category.charAt(0).toUpperCase() + category.slice(1);
+
+  const categoryResult = await pool.query(
+    "SELECT * FROM category WHERE category_name = $1 AND user_account_id = $2",
+    [category_name, user]
+  );
+  console.log("Category resultdd: ", categoryResult.rows);
+  return categoryResult.rows;
+};
+
+const postCategory = async ({ category_name, user_account_id }) => {
+  try {
+    const results = await pool.query(
+      "INSERT INTO category (category_name, user_account_id) VALUES ($1, $2) RETURNING *",
+      [category_name, user_account_id]
+    );
+    return results.rows[0];
+  } catch (e) {
+    throw new QueryError(e);
+  }
+};
+
 module.exports = {
   getEmail,
   addNewUser,
@@ -134,4 +183,7 @@ module.exports = {
   deleteRefreshToken,
   getRefreshToken,
   checkRefreshTokenByUserId,
+  postBudget,
+  getCategory,
+  postCategory,
 };

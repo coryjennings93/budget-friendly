@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import CurrencyInput from "react-currency-input-field";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray, useFormContext } from "react-hook-form";
 import { z } from "zod";
-import { AddExpenseValidation } from "@/utils/validation";
+import { CreateBudgetValidation } from "@/utils/validation";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
@@ -34,10 +34,12 @@ import { format } from "date-fns";
 import { useExpensesDemo } from "@/context";
 import LogoIcon from "../icons/LogoIcon";
 import AddCategory from "../shared/AddCategory";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
 import { formatCostBasedOnTransactionType } from "@/utils/utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const CreateBudgetForm = () => {
   const { categories, addExpense } = useExpensesDemo();
@@ -51,28 +53,69 @@ const CreateBudgetForm = () => {
   const handleIsOpen = () => setIsAddCategoryOpen(!isAddCategoryOpen);
 
   // 1. Define your form.
-  const form = useForm<z.infer<typeof AddExpenseValidation>>({
-    resolver: zodResolver(AddExpenseValidation),
+  const form = useForm<z.infer<typeof CreateBudgetValidation>>({
+    resolver: zodResolver(CreateBudgetValidation),
     defaultValues: {
-      transactionType: undefined,
-      date: undefined,
-      cost: undefined,
-      category: "",
-      transactionDescription: "",
+      budgetName: "",
+      month: "",
+      year: "",
+      budgetAmount: undefined,
+      categories: [
+        {
+          category: "",
+          categoryAmount: undefined,
+        },
+      ],
     },
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "categories",
+  });
+
+  // Function to calculate the total amount of categories
+  const calculateTotalCategoriesAmount = (
+    categories: { category: string; categoryAmount: string }[]
+  ) => {
+    return categories.reduce(
+      (total: number, category: { category: string; categoryAmount: number }) =>
+        total + parseFloat(category.categoryAmount),
+      0
+    );
+  };
+
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof AddExpenseValidation>) {
+  async function onSubmit(values: z.infer<typeof CreateBudgetValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values.transactionType);
-    values.cost = formatCostBasedOnTransactionType(
-      values.transactionType,
-      values.cost
+
+    const validCategories = values.categories.filter(
+      (category) => category.category && category.categoryAmount
     );
-    console.log(values.cost);
-    return;
+    console.log("validCategories: ", validCategories);
+    if (
+      calculateTotalCategoriesAmount(values.categories) !== values.budgetAmount
+    ) {
+      form.setError("categories", {
+        type: "manual",
+        message:
+          "The total of all categories must be equal to the total budget.",
+      });
+      return;
+    }
+    console.log(values.categories);
+
+    // Remove empty category objects
+    // Construct valid categories array
+    // const validCategories = fields
+    //   .map((field) => ({
+    //     category: field.category,
+    //     categoryAmount: field.categoryAmount,
+    //   }))
+    //   .filter((category) => category.category && category.categoryAmount);
+    // console.log("validCategories: ", validCategories);
+    // console.log("fields: ", fields);
     try {
       if (!user) {
         addExpense(values);
@@ -82,18 +125,18 @@ const CreateBudgetForm = () => {
       } else {
         try {
           // define transaction
-          const transaction = {
-            user: user.id,
-            date: values.date,
-            cost: values.cost,
-            category: values.category,
-            type: values.transactionType,
-            transactionDescription: values.transactionDescription,
-            bank_account: "main",
+          const budget = {
+            budget_name: values.budgetName,
+            budget_month: values.month,
+            budget_year: values.year,
+            budget_amount: values.budgetAmount,
+            budget_categories: validCategories,
           };
 
+          console.log("budget: ", budget);
+
           const response = await axiosPrivate
-            .post("/api/v1/transactions", transaction)
+            .post("/api/v1/budgets", budget)
             .catch((error) => {
               console.error(error);
               setServerErrors(error);
@@ -140,7 +183,9 @@ const CreateBudgetForm = () => {
           <LogoIcon width="w-24" />
 
           <form
-            onSubmit={!isAddCategoryOpen && form.handleSubmit(onSubmit)}
+            onSubmit={
+              !isAddCategoryOpen ? form.handleSubmit(onSubmit) : undefined
+            }
             className="flex flex-col w-full gap-3 mt-4"
           >
             <div className="sm:flex sm:flex-row sm:gap-3">
@@ -152,7 +197,7 @@ const CreateBudgetForm = () => {
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input
-                        id="transactionDescription"
+                        id="budgetName"
                         placeholder="Nickname"
                         {...field}
                       />
@@ -232,7 +277,7 @@ const CreateBudgetForm = () => {
             </div>
             <FormField
               control={form.control}
-              name="amount"
+              name="budgetAmount"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Total Budget</FormLabel>
@@ -252,60 +297,91 @@ const CreateBudgetForm = () => {
                 </FormItem>
               )}
             />
-            <div className="sm:flex sm:flex-row sm:gap-3">
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <div className="flex gap-1 ">
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a Category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categoriesList.map((category: string) => (
-                            <SelectItem value={category}>{category}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <div onClick={() => console.log()}>
-                        <AddCategory handleIsOpen={handleIsOpen} />
-                      </div>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="categoryAmount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Total Budget</FormLabel>
-                    <FormControl>
-                      {/* <Input placeholder="&#36; 0.00" {...field} step={"any"} /> */}
-                      <CurrencyInput
-                        id="cost"
-                        decimalsLimit={2}
-                        placeholder="&#36; 0.00"
-                        value={field.value}
-                        prefix="$ "
-                        onValueChange={field.onChange}
-                        className="block h-10 px-3 py-2 text-sm font-normal border rounded-md border-input"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+            <div className="text-sm font-medium sm:flex sm:gap-1">
+              <p>Categories</p>
+              <div className="sm:ml-auto" onClick={() => console.log()}>
+                <AddCategory
+                  handleIsOpen={handleIsOpen}
+                  fromCreateBudget={true}
+                />
+              </div>
             </div>
+            {fields.map((field, index) => (
+              <div className="sm:flex sm:flex-row sm:gap-3" key={field.id}>
+                <div className="grow">
+                  <FormField
+                    control={form.control}
+                    name={`categories.${index}.category`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex gap-1 ">
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a Category" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {categoriesList.map((category: string) => (
+                                <SelectItem value={category}>
+                                  {category}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name={`categories.${index}.categoryAmount`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <CurrencyInput
+                          id="cost"
+                          decimalsLimit={2}
+                          placeholder="&#36; 0.00"
+                          value={field.value}
+                          prefix="$ "
+                          onValueChange={field.onChange}
+                          className="block h-10 px-3 py-2 text-sm font-normal border rounded-md border-input"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button variant="destructive" onClick={() => remove(index)}>
+                  <FontAwesomeIcon icon={faXmark} />
+                </Button>
+              </div>
+            ))}
+            <p
+              className="text-blue-900 cursor-pointer hover:text-blue-500"
+              onClick={() =>
+                append({
+                  category: "",
+                  categoryAmount: undefined,
+                })
+              }
+            >
+              + Add another category
+            </p>
+
+            {form.formState.errors.categories && (
+              <div className="text-red-500">
+                {form.formState.errors.categories.message}
+              </div>
+            )}
 
             <Button
               disabled={form.formState.isSubmitting}

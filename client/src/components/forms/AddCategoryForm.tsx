@@ -15,9 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { AddCategoryValidation } from "@/utils/validation";
 import { useExpensesDemo } from "@/context";
+import { useAuth } from "@/context/AuthContext";
+import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
 
 const AddCategoryForm = () => {
   const { addCategory } = useExpensesDemo();
+  const { user } = useAuth();
+  const axiosPrivate = useAxiosAuthInstance();
 
   const form = useForm<z.infer<typeof AddCategoryValidation>>({
     resolver: zodResolver(AddCategoryValidation),
@@ -26,9 +30,30 @@ const AddCategoryForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof AddCategoryValidation>) {
+  async function onSubmit(values: z.infer<typeof AddCategoryValidation>) {
     try {
-      addCategory(values);
+      if (!user) {
+        addCategory(values);
+        //   await new Promise((resolve) => setTimeout(resolve, 1000));
+        //   throw new Error();
+        form.reset();
+      } else {
+        try {
+          const category = { name: values.name, user_id: user.id };
+          console.log(category);
+          const response = await axiosPrivate
+            .post("/api/v1/categories", category)
+            .catch((error) => {
+              console.error(error);
+              setServerErrors(error);
+            });
+        } catch (error) {
+          form.setError("root", {
+            message:
+              "There was an error saving your expense. Please try again.",
+          });
+        }
+      }
       form.reset();
     } catch (error) {
       form.setError("root", {

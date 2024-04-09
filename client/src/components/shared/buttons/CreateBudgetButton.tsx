@@ -16,7 +16,7 @@ const CreateBudgetButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button title="add category">
+        <Button title="create budget">
           <FontAwesomeIcon icon={faPlus} />
         </Button>
       </DialogTrigger>

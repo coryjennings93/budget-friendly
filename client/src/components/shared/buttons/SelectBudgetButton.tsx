@@ -18,7 +18,7 @@ const SelectBudgetButton = () => {
   ];
   return (
     <Select>
-      <SelectTrigger className="w-[180px] text-primary-foreground bg-primary">
+      <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select Budget" />
       </SelectTrigger>
       <SelectContent>

@@ -29,16 +29,15 @@ export const LoginValidation = z.object({
   email: z.string().email({message: "Invalid email."}),
   password: z.string().min(1, {message: 'Please enter your password.'}).max(15, {message: 'Password cannot be over 15 characters.'})});
 
-
-export const AddExpenseValidation = z.object({
-  transactionType: z.string().min(1, {message: 'Please select a transaction type.'}),
-  date: z.date({
-    required_error: "A date of transaction is needed.",
-  }),
-  cost: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val),
-  category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),
-  transactionDescription: z.string()
-})
+  export const AddExpenseValidation = z.object({
+    transactionType: z.string().min(1, {message: 'Please select a transaction type.'}),
+    date: z.date({
+      required_error: "A date of transaction is needed.",
+    }),
+    cost: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val),
+    category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),
+    transactionDescription: z.string()
+  })
 
 export const EditExpenseValidation = z.object({
   id: z.string(),
@@ -64,6 +63,18 @@ export const DeleteCategoryValidation = z.object({
   name: z.string({
     required_error: "Please select a language.",
   }),
+})
+
+
+export const CreateBudgetValidation = z.object({
+  budgetName: z.string().min(1, {message: 'Please create a name for your budget.'}),
+  month: z.string().min(1, {message: 'Please select a month.'}),
+  year: z.string().min(1, {message: 'Please select a year.'}),
+  budgetAmount: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val),
+  categories: z.array(z.object({
+    category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),
+    categoryAmount: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val)
+  }))
 })
 
 

@@ -19,9 +19,10 @@ CREATE TABLE monthly_budget (
   monthly_budget_id serial PRIMARY KEY,
   monthly_budget_date_created date NOT NULL DEFAULT CURRENT_DATE,
   monthly_budget_amount decimal NOT NULL,
-  monthly_budget_month integer NOT NULL,
-  monthly_budget_year integer NOT NULL,
-  user_account_id integer NOT NULL REFERENCES user_account(user_account_id) ON DELETE CASCADE ON UPDATE CASCADE
+  monthly_budget_month text NOT NULL,
+  monthly_budget_year text NOT NULL,
+  user_account_id integer NOT NULL REFERENCES user_account(user_account_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  monthly_budget_name text NOT NULL
 );
 
 CREATE TABLE budget_by_category (
