@@ -84,7 +84,7 @@ const clearRefreshToken = async (req, res) => {
   }
 };
 
-const clearAccessToken = async (req, res) => {
+const clearAccessToken = (req, res) => {
   if (!req.cookies.access_token) {
     throw new Error("No access token found in the cookies.");
   }

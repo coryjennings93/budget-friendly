@@ -15,7 +15,7 @@ import SelectBudgetButton from "@/components/shared/buttons/SelectBudgetButton";
 import CreateBudgetForm from "@/components/shared/buttons/CreateBudgetButton";
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, transactions, categories, budgets } = useAuth();
   const { height } = useViewport();
 
   const [navBarHeight, setNavBarHeight] = useState(null);
@@ -28,6 +28,13 @@ const Dashboard = () => {
   useEffect(() => {
     setRemainingHeight(height - navBarHeight);
   }, [height, navBarHeight]);
+
+  console.log("categories: ", categories);
+
+  if (!budgets || !transactions || !categories) {
+    // Render a loading indicator or placeholder until all data is fetched
+    return <h1>Loading Data...</h1>;
+  }
 
   return (
     <>
@@ -46,6 +53,28 @@ const Dashboard = () => {
                 <article className="flex gap-1">
                   <SelectBudgetButton />
                   <CreateBudgetForm />
+                  <h3>Transactions</h3>
+                  <ul>
+                    {transactions.map((transaction) => (
+                      <li key={transaction.id}>
+                        {/* <Link to={`/transactions/${transaction.id}`}>
+                          {transaction.description}
+                        </Link> */}
+                        <p>{transaction}</p>
+                      </li>
+                    ))}
+                  </ul>
+                  <h3>Categories</h3>
+                  <ul>
+                    {categories.map((category) => (
+                      <li key={category.category_id}>
+                        {/* <Link to={`/categorys/${category.id}`}>
+                          {category.description}
+                        </Link> */}
+                        <p>{category.category_name}</p>
+                      </li>
+                    ))}
+                  </ul>
                 </article>
                 <article>
                   <div className="bg-rose-500 w-100 h-100">piechart</div>

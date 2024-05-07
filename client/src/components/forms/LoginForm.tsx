@@ -21,7 +21,7 @@ import { useAuth } from "@/context/AuthContext";
 const LoginForm = () => {
   const [serverErrors, setServerErrors] = useState(null);
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { setUser, fetchUserData } = useAuth();
   useEffect(() => {
     console.log("serverErrors: ", serverErrors);
   }, [serverErrors]);
@@ -71,6 +71,7 @@ const LoginForm = () => {
           email: decoded.user_account_email,
         };
         setUser(createUser);
+        await fetchUserData();
 
         setServerErrors(null);
         form.reset();

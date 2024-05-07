@@ -33,7 +33,9 @@ import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
-const CreateBudgetForm = () => {
+const CreateBudgetForm2 = () => {
+  let categories = null;
+
   const { user, categories, setBudgets } = useAuth();
   const categoriesList = categories.map(
     (category: {
@@ -398,4 +400,4 @@ const CreateBudgetForm = () => {
   );
 };
 
-export default CreateBudgetForm;
+export default CreateBudgetForm2;

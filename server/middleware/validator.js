@@ -1,5 +1,5 @@
 const { check, body, validationResult } = require("express-validator");
-const { getEmail, getCategory } = require("../database/queries");
+const { getEmail, checkCategoryAndReturnID } = require("../database/queries");
 const bcrypt = require("bcrypt");
 const InvalidCredentialsError = require("../errors/InvalidCredentialsError");
 const e = require("express");
@@ -37,7 +37,7 @@ const validPassword = async (password, { req }) => {
 
 const validCategory = async (category, { req }) => {
   const user = req.body.user_id;
-  const categoryResult = await getCategory(category, user);
+  const categoryResult = await checkCategoryAndReturnID(category, user);
   console.log("Category result: ", categoryResult);
   console.log("Req result: ", req.body);
   if (categoryResult.length > 0) {

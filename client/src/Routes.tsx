@@ -16,14 +16,10 @@ import { useAuth } from "./context/AuthContext";
 import ImageCredit from "./pages/ImageCredit";
 import SiteLayout from "./components/layouts/SiteLayout";
 import SiteLayoutJustFooter from "./components/layouts/SiteLayoutJustFooter";
-
-const Layout = () => {
-  return <div></div>;
-};
+import useAxiosAuthInstance from "./hooks/useAxiosAuthInstance";
 
 const Routes = () => {
-  const { user } = useAuth();
-  console.log("fromRoutesUser: ", user);
+  const { user, authenticatedUser } = useAuth();
 
   const router = createBrowserRouter(
     [
@@ -48,11 +44,13 @@ const Routes = () => {
       },
       {
         path: "/signup",
-        element: user ? <Navigate to="/dashboard" /> : <Signup />,
+        element:
+          authenticatedUser || user ? <Navigate to="/dashboard" /> : <Signup />,
       },
       {
         path: "/login",
-        element: user ? <Navigate to="/dashboard" /> : <Login />,
+        element:
+          authenticatedUser || user ? <Navigate to="/dashboard" /> : <Login />,
       },
       {
         element: <RequireAuth />,

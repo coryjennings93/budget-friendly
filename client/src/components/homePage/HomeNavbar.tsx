@@ -19,9 +19,9 @@ const HomeNavbar = () => {
   };
 
   return (
-    <div className="flex items-center justify-center p-2 lg:p-16 md:px-2 md:py-10 text-teal2darker">
+    <div className="flex items-center justify-center p-2 xl:p-16 md:px-2 md:py-10 text-teal2darker">
       <LogoIcon width="w-14" />
-      <h1 className="pb-2 pl-4 mb-1 text-2xl sm:text-2xl md:text-4xl text-[#19985b]">
+      <h1 className="pb-2 pl-4 mb-1 text-2xl sm:text-2xl md:text-3xl lg:text-4xl text-[#19985b] ">
         {SITE_NAME}
       </h1>
 
@@ -94,58 +94,40 @@ const HomeNavbar = () => {
       ) : (
         <div className="m-4 ml-auto rounded-lg shadow shadow-slate-600">
           <Link to="/">
-            {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
-              Demo
-            </button> */}
-            <span className="inline-block p-4 text-2xl rounded-l-lg w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
+            <span className="inline-block text-lg rounded-l-lg md:p-2 lg:p-4 lg:text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
               Home
             </span>
           </Link>
           <Link to="">
-            {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
-              Demo
-            </button> */}
-            <span className="inline-block p-4 text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
+            <span className="inline-block text-lg md:p-2 lg:p-4 lg:text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
               About
             </span>
           </Link>
           <Link to="">
-            {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
-              Demo
-            </button> */}
-            <span className="inline-block p-4 text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
+            <span className="inline-block text-lg md:p-2 lg:p-4 lg:text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
               Contact
             </span>
           </Link>
           <Link to="/demo">
-            {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-emerald-500 hover:bg-emerald-700">
-              Demo
-            </button> */}
-            <span className="inline-block p-4 text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
+            <span className="inline-block text-lg md:p-2 lg:p-4 lg:text-2xl w-30 text-offwhite hover:underline bg-emerald-500 hover:bg-emerald-700">
               Demo
             </span>
           </Link>
           {user ? (
             <Link to="/dashboard">
-              <span className="inline-block p-4 text-2xl rounded-r-lg w-30 text-offwhite hover:underline bg-rose-500 hover:bg-rose-700">
+              <span className="inline-block text-lg rounded-r-lg md:p-2 lg:p-4 lg:text-2xl w-30 text-offwhite hover:underline bg-rose-500 hover:bg-rose-700">
                 Account
               </span>
             </Link>
           ) : (
             <>
               <Link to="/signup">
-                {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded md:mr-4 bg-lime-500 hover:bg-lime-700">
-              Sign Up
-            </button> */}
-                <span className="inline-block p-4 text-2xl w-30 text-offwhite hover:underline bg-rose-500 hover:bg-rose-700">
+                <span className="inline-block text-lg md:p-2 lg:p-4 lg:text-2xl w-30 text-offwhite hover:underline bg-rose-500 hover:bg-rose-700">
                   Sign Up
                 </span>
               </Link>
               <Link to="/login">
-                {/* <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded rounded-l-lg md:mr-4 bg-amber-500 hover:bg-amber-600">
-              Log In
-            </button> */}
-                <span className="inline-block p-4 text-2xl rounded-r-lg w-30 text-offwhite hover:underline bg-amber-500 hover:bg-amber-600">
+                <span className="inline-block text-lg rounded-r-lg md:p-2 lg:p-4 lg:text-2xl w-30 text-offwhite hover:underline bg-amber-500 hover:bg-amber-600">
                   Log In
                 </span>
               </Link>

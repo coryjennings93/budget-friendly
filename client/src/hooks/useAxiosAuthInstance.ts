@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 
 const useAxiosAuthInstance = () => {
     const refresh = useRefreshToken();
-    const { accessToken, setAccessToken } = useAuth();
 
     useEffect(() => {
         // const requestInterceptor = axiosAuthInstance.interceptors.request.use(
@@ -26,9 +25,7 @@ const useAxiosAuthInstance = () => {
                     try {
                         // access token is expired
                         const newAccessToken = await refresh();
-                        setAccessToken(prev => {
-                            return {...prev, accessToken: newAccessToken};
-                        });
+
                         return axiosAuthInstance(prevRequest);
                     } catch (error) {
                         console.log(error);
@@ -44,7 +41,7 @@ const useAxiosAuthInstance = () => {
             // axiosAuthInstance.interceptors.request.eject(requestIntercept);
             axiosAuthInstance.interceptors.response.eject(responseIntercept);
         };
-    }, [accessToken, refresh]);
+    }, [refresh]);
 
     return axiosAuthInstance;
 }

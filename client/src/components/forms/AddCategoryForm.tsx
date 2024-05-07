@@ -20,7 +20,7 @@ import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
 
 const AddCategoryForm = () => {
   const { addCategory } = useExpensesDemo();
-  const { user } = useAuth();
+  const { user, setCategories } = useAuth();
   const axiosPrivate = useAxiosAuthInstance();
 
   const form = useForm<z.infer<typeof AddCategoryValidation>>({
@@ -40,9 +40,14 @@ const AddCategoryForm = () => {
       } else {
         try {
           const category = { name: values.name, user_id: user.id };
-          console.log(category);
           const response = await axiosPrivate
             .post("/api/v1/categories", category)
+            .then((response) => {
+              console.log("outside201: ", response.data);
+              if (response.status === 201) {
+                setCategories(() => response.data);
+              }
+            })
             .catch((error) => {
               console.error(error);
               setServerErrors(error);

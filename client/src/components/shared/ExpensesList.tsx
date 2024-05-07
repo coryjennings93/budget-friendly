@@ -21,8 +21,8 @@ const ExpensesList = () => {
   const { width } = useViewport();
   expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  if (filteredByDate.length > 0) {
-  }
+  // if (filteredByDate.length > 0) {
+  // }
 
   const renderExpense = (expense) => {
     // console.log(filteredByDate);

@@ -19,7 +19,7 @@ const Home = () => {
       <Button onClick={test}>test</Button>
       <div className="min-h-screen text-teal2darker bg-[url('../src/assets/img/abstract-background.jpg')] bg-no-repeat  ">
         <HomeNavbar />
-        <div className="flex flex-col gap-10 p-6 md:p-24 lg:px-52 md:flex-row">
+        <div className="flex flex-col gap-16 p-6 lg:p-24 lg:px-52 lg:flex-row md:px-24">
           <div className="flex flex-col items-center justify-center xl:basis-2/3 md:basis-1/2">
             <h1 className="pb-2 text-center md:text-4xl gradient-text 2xl:text-5xl">
               Welcome to Budget Friendly
@@ -39,16 +39,6 @@ const Home = () => {
               data.
             </p>
 
-            {/* <Link to="/login">
-              <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-amber-500 hover:bg-amber-600">
-                Log In
-              </button>
-            </Link>
-            <Link to="/signup">
-              <button className="w-48 px-4 py-2 mt-4 font-bold text-white rounded bg-lime-500 hover:bg-lime-700">
-                Sign Up
-              </button>
-            </Link> */}
             <Link to="/demo">
               <button className="w-56 h-12 px-4 py-2 mt-10 text-lg font-bold text-white rounded shadow bg-emerald-500 hover:bg-emerald-700">
                 Demo
@@ -56,7 +46,7 @@ const Home = () => {
             </Link>
           </div>
           <div className="flex xl:basis-1/3 md:basis-1/2">
-            <div className="m-auto max-w-72 md:max-w-full align-center">
+            <div className="m-auto max-w-72 lg:max-w-full align-center">
               <img
                 src="../src/assets/img/budgeting-calculator-2.png"
                 alt="smiling calculator"
@@ -66,7 +56,7 @@ const Home = () => {
         </div>
       </div>
       <section className="flex flex-col gap-20 px-16 lg:flex-row bg-offwhite py-36 text-teal2darker 2xl:gap-36 2xl:p-52 ">
-        <div className="m-auto basis-1/3">
+        <div className="m-auto basis-1/3 max-w-72 lg:max-w-full">
           <img
             src="../src/assets/img/business-report.png"
             alt="budgeting tools"

@@ -124,6 +124,15 @@ const postTransaction = async (
   }
 };
 
+// get all budgets for a user
+const getBudgets = async (user_id) => {
+  const budgets = await pool.query(
+    "SELECT * FROM monthly_budget WHERE user_account_id = $1",
+    [user_id]
+  );
+  return budgets.rows;
+};
+
 // returns the user ID so that we can use it to insert into the budget_by_category table
 const postBudget = async ({
   monthly_budget_amount,
@@ -149,15 +158,34 @@ const postBudget = async ({
   }
 };
 
-const getCategory = async (category, user) => {
+const getCategories = async (user_id) => {
+  const categories = await pool.query(
+    "SELECT * FROM category WHERE user_account_id = $1",
+    [user_id]
+  );
+  return categories.rows;
+};
+
+const getCategoriesPerBudget = async (user_id, budget_id) => {
+  const categories = await pool.query(
+    "SELECT * FROM category WHERE user_account_id = $1 AND category_id IN (SELECT category_id FROM budget_by_category WHERE monthly_budget_id = $2)",
+    [user_id, budget_id]
+  );
+  return categories.rows;
+};
+
+const checkCategoryAndReturnID = async (category, user) => {
   // capitalize first letter in case it is not
   const category_name = category.charAt(0).toUpperCase() + category.slice(1);
 
   const categoryResult = await pool.query(
-    "SELECT * FROM category WHERE category_name = $1 AND user_account_id = $2",
+    "SELECT category_id FROM category WHERE category_name = $1 AND user_account_id = $2",
     [category_name, user]
   );
-  console.log("Category resultdd: ", categoryResult.rows);
+  console.log("Category result: ", categoryResult.rows);
+  if (categoryResult.rows.length > 1) {
+    throw new QueryError("Error with category query");
+  }
   return categoryResult.rows;
 };
 
@@ -173,6 +201,22 @@ const postCategory = async ({ category_name, user_account_id }) => {
   }
 };
 
+const insertIntoBudgetByCategory = async ({
+  monthly_budget_id,
+  category_id,
+  budget_by_category_amount,
+}) => {
+  try {
+    await pool.query(
+      "INSERT INTO budget_by_category (monthly_budget_id, category_id, budget_by_category_amount) VALUES ($1, $2, $3)",
+      [monthly_budget_id, category_id, budget_by_category_amount]
+    );
+    return;
+  } catch (e) {
+    throw new QueryError(e);
+  }
+};
+
 module.exports = {
   getEmail,
   addNewUser,
@@ -183,7 +227,11 @@ module.exports = {
   deleteRefreshToken,
   getRefreshToken,
   checkRefreshTokenByUserId,
+  getBudgets,
   postBudget,
-  getCategory,
+  getCategories,
+  getCategoriesPerBudget,
+  checkCategoryAndReturnID,
   postCategory,
+  insertIntoBudgetByCategory,
 };

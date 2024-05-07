@@ -1,4 +1,11 @@
-const { getTransactions, postBudget } = require("../database/queries");
+const {
+  getTransactions,
+  postBudget,
+  checkCategoryAndReturnID,
+  getBudgets,
+  getCategoriesPerBudget,
+  insertIntoBudgetByCategory,
+} = require("../database/queries");
 const { authenticateToken } = require("../middleware/authorization");
 const { tryCatch } = require("../utils/trycatch");
 const jwt = require("jsonwebtoken");
@@ -12,11 +19,11 @@ router
   .get(
     authenticateToken,
     tryCatch(async (req, res, next) => {
-      //   const accessToken = req.cookies.access_token;
-      //   payload = jwt.decode(accessToken);
-      //   const userId = payload.user_account_id;
-      //   const transactions = await getTransactions(userId);
-      //   res.status(200).json(transactions.rows);
+      const accessToken = req.cookies.access_token;
+      payload = jwt.decode(accessToken);
+      const userId = payload.user_account_id;
+      const budgets = await getBudgets(userId);
+      res.status(200).json(budgets);
     })
   )
   .post(
@@ -30,6 +37,17 @@ router
       const userId = payload.user_account_id;
       console.log("User ID: ", userId);
 
+      // check to make sure monthly budget name doesn't already exist
+      const budgets = await getBudgets(userId);
+      if (budgets.length > 0) {
+        for (let i = 0; i < budgets.length; i++) {
+          if (budgets[i].monthly_budget_name === req.body.budget_name) {
+            res.status(400).json({ message: "Budget name already exists" });
+            return;
+          }
+        }
+      }
+
       // create the object to send to the postBudget function
       const budget = {
         monthly_budget_amount: req.body.budget_amount,
@@ -40,17 +58,44 @@ router
       };
       const result = await postBudget(budget);
       const monthly_budget_id = result.monthly_budget_id;
-      //   for (let i = 0; i < req.body.budget_categories.length; i++) {
-      //     const category = req.body.categories[i];
-      //     const category_id = category.category_id;
-      //     const budget_by_category = {
-      //       monthly_budget_id,
-      //       category_id,
-      // res.status(200).json(transactions.rows);
 
-      res.status(200).json({ message: "Transaction added" });
+      // load categories into the budget_by_category table
+      const categories = req.body.budget_categories;
+      console.log("Category length: ", req.body.budget_categories.length);
+      for (let i = 0; i < categories.length; i++) {
+        const category = categories[i];
+        const category_id = await checkCategoryAndReturnID(
+          category.category,
+          userId
+        );
+        const realCategory_id = category_id[0].category_id;
+        const budget_by_category = {
+          monthly_budget_id,
+          category_id: realCategory_id,
+          budget_by_category_amount: category.categoryAmount,
+        };
+        console.log("Budget by category: ", budget_by_category);
+        await insertIntoBudgetByCategory(budget_by_category);
+      }
+      const budgetsAfterPost = await getBudgets(userId);
+
+      res.status(201).json(budgetsAfterPost);
     })
   );
+
+router.route("/:budget/categories").get(
+  authenticateToken,
+  tryCatch(async (req, res, next) => {
+    const budgetId = req.params.budget;
+    console.log("Budget ID: ", budgetId);
+    const accessToken = req.cookies.access_token;
+    payload = jwt.decode(accessToken);
+    const userId = payload.user_account_id;
+    const categories = await getCategoriesPerBudget(userId, budgetId);
+    console.log("Categories per: ", categories);
+    res.status(200).json(categories);
+  })
+);
 
 // update budget
 

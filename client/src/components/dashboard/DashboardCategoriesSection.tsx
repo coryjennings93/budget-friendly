@@ -2,8 +2,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DashboardCategoryCard from "./DashboardCategoryCard";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "../ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 const DashboardCategoriesSection = () => {
+  const { categoriesInBudget } = useAuth();
+  console.log("categoriesInBudget: ", categoriesInBudget);
   const categories = [
     "Food",
     "Transport",
@@ -21,9 +24,13 @@ const DashboardCategoriesSection = () => {
         </Button>
       </div>
       <div className="max-h-[300px] overflow-y-scroll scroller">
-        {categories.map((category: string, i) => (
-          <DashboardCategoryCard key={i} category={category} />
-        ))}
+        {categoriesInBudget && categoriesInBudget.length > 0
+          ? categoriesInBudget.map((category: string, i) => (
+              <DashboardCategoryCard key={i} category={category} />
+            ))
+          : categories.map((category, i) => (
+              <DashboardCategoryCard key={i} category={category} />
+            ))}
       </div>
     </section>
   );

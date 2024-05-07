@@ -37,6 +37,16 @@ router.route("/test").get(
   })
 );
 
+router.route("/authenticated").get(
+  authenticateToken,
+  tryCatch(async (req, res, next) => {
+    const accessToken = req.cookies.access_token;
+    res
+      .status(200)
+      .json({ message: "Authenticated user exists.", accessToken });
+  })
+);
+
 router.route("/users").get(
   tryCatch(async (req, res, next) => {
     const allUsers = await pool.query("SELECT * FROM user_account");
@@ -57,6 +67,7 @@ router.route("/register").post(
     next();
   }),
 
+  // this does the same thing as logging in does
   tryCatch(async (req, res, next) => {
     await assignTokensToUserAndAddToDB(req, res, next);
   })
@@ -92,7 +103,7 @@ router.route("/logout").get(
   tryCatch(async (req, res, next) => {
     await clearRefreshToken(req, res);
     clearAccessToken(req, res);
-    res.status(200).json({ message: "Token cleared" });
+    res.status(200).json({ message: "Tokens cleared" });
   })
 );
 
