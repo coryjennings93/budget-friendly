@@ -168,9 +168,12 @@ const getCategories = async (user_id) => {
 
 const getCategoriesPerBudget = async (user_id, budget_id) => {
   const categories = await pool.query(
-    "SELECT * FROM category WHERE user_account_id = $1 AND category_id IN (SELECT category_id FROM budget_by_category WHERE monthly_budget_id = $2)",
+    "SELECT category.category_id, category.category_name, budget_by_category.monthly_budget_id, budget_by_category.budget_by_category_amount FROM category JOIN budget_by_category ON category.category_id = budget_by_category.category_id WHERE category.user_account_id = $1 AND budget_by_category.monthly_budget_id = $2 AND category.category_id IN (SELECT budget_by_category.category_id FROM budget_by_category WHERE budget_by_category.monthly_budget_id = $2);",
     [user_id, budget_id]
   );
+  // const categories2 = await pool.query("SELECT * FROM budget_by_category;");
+  // console.log("Categories2 per budget: ", categories2.rows);
+  console.log("Categories per budget: ", categories.rows);
   return categories.rows;
 };
 

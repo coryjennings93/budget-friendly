@@ -1,40 +1,11 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import CurrencyInput from "react-currency-input-field";
-import { useForm, useFieldArray, useFormContext } from "react-hook-form";
-import { z } from "zod";
-import { CreateBudgetValidation } from "@/utils/validation";
-import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-import { Input } from "@/components/ui/input";
-import LogoIcon from "../icons/LogoIcon";
-import AddCategory from "../shared/AddCategory";
-import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { EditBudgetValidation } from "@/utils/validation";
 
-const CreateBudgetForm = () => {
-  const { user, categories, setBudgets } = useAuth();
+const EditBudgetForm = () => {
+  const { categoriesInBudget, selectedBudget, user, categories, setBudgets } =
+    useAuth();
+
   const categoriesList = categories.map(
     (category: {
       category_id: number;
@@ -51,19 +22,14 @@ const CreateBudgetForm = () => {
   const handleIsOpen = () => setIsAddCategoryOpen(!isAddCategoryOpen);
 
   // 1. Define your form.
-  const form = useForm<z.infer<typeof CreateBudgetValidation>>({
-    resolver: zodResolver(CreateBudgetValidation),
+  const form = useForm<z.infer<typeof EditBudgetValidation>>({
+    resolver: zodResolver(EditBudgetValidation),
     defaultValues: {
-      budgetName: "",
-      month: "",
-      year: "",
-      budgetAmount: undefined,
-      categories: [
-        {
-          category: "",
-          categoryAmount: undefined,
-        },
-      ],
+      budgetName: selectedBudget.monthly_budget_name,
+      month: selectedBudget.monthly_budget_month,
+      year: selectedBudget.monthly_budget_year,
+      budgetAmount: selectedBudget.monthly_budget_amount,
+      //   categories: categoriesInBudget
     },
   });
 
@@ -74,17 +40,17 @@ const CreateBudgetForm = () => {
 
   // Function to calculate the total amount of categories
   const calculateTotalCategoriesAmount = (
-    categories: { category: string; categoryAmount: number }[]
+    categories: { category: string; categoryAmount: string }[]
   ) => {
     return categories.reduce(
       (total: number, category: { category: string; categoryAmount: number }) =>
-        total + category.categoryAmount,
+        total + parseFloat(category.categoryAmount),
       0
     );
   };
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof CreateBudgetValidation>) {
+  async function onSubmit(values: z.infer<typeof EditBudgetValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
 
@@ -156,6 +122,7 @@ const CreateBudgetForm = () => {
       });
     }
   }
+
   return (
     <>
       {serverErrors && (
@@ -398,4 +365,4 @@ const CreateBudgetForm = () => {
   );
 };
 
-export default CreateBudgetForm;
+export default EditBudgetForm;

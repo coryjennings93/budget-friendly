@@ -70,6 +70,18 @@ export const CreateBudgetValidation = z.object({
   budgetName: z.string().min(1, {message: 'Please create a name for your budget.'}),
   month: z.string().min(1, {message: 'Please select a month.'}),
   year: z.string().min(1, {message: 'Please select a year.'}),
+  budgetAmount: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => parseFloat(val)),
+  categories: z.array(z.object({
+    category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),
+    categoryAmount: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => parseFloat(val))
+  }))
+})
+
+export const EditBudgetValidation = z.object({
+  id: z.number(),
+  budgetName: z.string().min(1, {message: 'Please enter a name for your budget.'}),
+  month: z.string().min(1, {message: 'Please select a month.'}),
+  year: z.string().min(1, {message: 'Please select a year.'}),
   budgetAmount: z.string().min(1, {message: 'Cost must be at least 0.01.'}).transform((val) => +val),
   categories: z.array(z.object({
     category: z.string().min(1, {message: "Must select a category."}).max(200, {message: 'Input cannot be over 200 characters.'}),

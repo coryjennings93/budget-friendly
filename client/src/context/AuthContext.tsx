@@ -17,6 +17,16 @@ type User = {
   email: string;
 };
 
+type SelectedBudget = {
+  monthly_budget_amount: number;
+  monthly_budget_date_created: string;
+  monthly_budget_id: number;
+  monthly_budget_month: string;
+  monthly_budget_name: string;
+  monthly_budget_year: string;
+  user_account_id: number;
+};
+
 interface AuthContextProviderProps {
   children: ReactNode;
   // any props that come into the component
@@ -33,28 +43,55 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [transactions, setTransactions] = useState(null);
   // const { budgets, setBudgets } = useBudgets();
   const [budgets, setBudgets] = useState(null);
-  const [selectedBudget, setSelectedBudget] = useState(null);
+  const [selectedBudget, setSelectedBudget] = useState<SelectedBudget | null>(
+    null
+  );
   const [categoriesInBudget, setCategoriesInBudget] = useState(null);
   const [transactionsInBudget, setTransactionsInBudget] = useState(null);
   const [authenticatedUser, setAuthenticatedUser] = useState(false);
 
   const axiosPrivate = useAxiosAuthInstance();
 
-  useEffect(() => {
-    console.log("AuthContextProvider budgets: ", budgets);
-  }, []);
+  // useEffect(() => {
+  //   console.log("AuthContextProvider budgets: ", budgets);
+  // }, []);
 
-  useEffect(() => {
-    console.log("AuthContextProvider user: ", user);
-  }, []);
+  // useEffect(() => {
+  //   console.log("AuthContextProvider user: ", user);
+  // }, []);
 
-  useEffect(() => {
-    console.log("AuthContextProvider categories: ", categories);
-  }, [categories]);
+  // useEffect(() => {
+  //   console.log("AuthContextProvider categories: ", categories);
+  // }, [categories]);
 
-  useEffect(() => {
-    console.log("AuthContextProvider transactions: ", transactions);
-  }, [transactions]);
+  // useEffect(() => {
+  //   console.log("AuthContextProvider transactions: ", transactions);
+  // }, [transactions]);
+
+  // useEffect(() => {
+  //   if (selectedBudget) {
+  //     const fetchCategoriesInBudget = async () => {
+  //       try {
+  //         const categoriesResponse = await axiosPrivate.get(
+  //           `/api/v1/budgets/${selectedBudget.monthly_budget_id}/categories`
+  //         );
+  //         if (categoriesResponse.statusText === "OK") {
+  //           const categoriesData = await categoriesResponse.data;
+  //           console.log(
+  //             "categoriesInBudgetDataFromAuthContext: ",
+  //             categoriesData
+  //           );
+  //           // setCategoriesInBudget(categoriesData);
+  //         } else {
+  //           console.log("Error fetching categories: ", categoriesResponse);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching categories: ", error);
+  //       }
+  //     };
+  //     fetchCategoriesInBudget();
+  //   }
+  // }, [selectedBudget]);
 
   // verify that there is a valid access token when the page loads
   useEffect(() => {

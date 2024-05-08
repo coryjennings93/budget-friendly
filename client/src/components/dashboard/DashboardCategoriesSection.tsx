@@ -1,36 +1,41 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DashboardCategoryCard from "./DashboardCategoryCard";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "../ui/button";
 import { useAuth } from "@/context/AuthContext";
+import EditBudgetButton from "../shared/buttons/EditBudgetButton";
 
 const DashboardCategoriesSection = () => {
-  const { categoriesInBudget } = useAuth();
-  console.log("categoriesInBudget: ", categoriesInBudget);
-  const categories = [
-    "Food",
-    "Transport",
-    "Entertainment",
-    "Health",
-    "Education",
-    "Other",
-  ];
+  const { categoriesInBudget, selectedBudget } = useAuth();
+
   return (
     <section className="p-2 m-2 border-2 rounded border-slate-500">
-      <div className="flex flex-row">
+      <div className="flex flex-row justify-between">
         <h3>Categories</h3>
-        <Button title="add category" className="ml-auto">
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
+        {selectedBudget ? <EditBudgetButton /> : null}
       </div>
-      <div className="max-h-[300px] overflow-y-scroll scroller">
-        {categoriesInBudget && categoriesInBudget.length > 0
-          ? categoriesInBudget.map((category: string, i) => (
-              <DashboardCategoryCard key={i} category={category} />
-            ))
-          : categories.map((category, i) => (
-              <DashboardCategoryCard key={i} category={category} />
-            ))}
+      <div className="h-[300px] overflow-y-scroll scroller">
+        {categoriesInBudget && categoriesInBudget.length > 0 ? (
+          categoriesInBudget.map(
+            (category: {
+              budget_by_category_amount: number;
+              category_id: number;
+              category_name: string;
+              user_account_id: number;
+            }) => (
+              <DashboardCategoryCard
+                key={category.category_id}
+                category={category.category_name}
+                budgetAmount={category.budget_by_category_amount}
+              />
+            )
+          )
+        ) : (
+          <>
+            <div className="bg-[rgb(255,246,210)] my-2 rounded p-2 h-[64px]"></div>
+            <div className="bg-[rgb(255,246,210)] my-2 rounded p-2 h-[64px]"></div>
+            <div className="bg-[rgb(255,246,210)] my-2 rounded p-2 h-[64px]"></div>
+            <div className="bg-[rgb(255,246,210)] my-2 rounded p-2 h-[64px]"></div>
+            <div className="bg-[rgb(255,246,210)] my-2 rounded p-2 h-[64px]"></div>
+          </>
+        )}
       </div>
     </section>
   );

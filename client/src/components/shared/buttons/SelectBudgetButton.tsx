@@ -9,27 +9,31 @@ import {
 } from "@/components/ui/select";
 import { useAuth } from "@/context/AuthContext";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
-import { useBudgets } from "@/hooks/useBudgets";
-import { useState } from "react";
 
 const SelectBudgetButton = () => {
-  const { budgets, setCategoriesInBudget } = useAuth();
-  console.log("budgets: ", budgets);
+  const { budgets, setCategoriesInBudget, setSelectedBudget } = useAuth();
+
   const axiosPrivate = useAxiosAuthInstance();
-  const [selectedItem, setSelectedItem] = useState(null);
 
   const handleSelectChange = async (budgetName) => {
-    setSelectedItem(budgetName);
-    console.log("budgetName: ", budgetName);
     const budget = budgets.find(
       (element) => element.monthly_budget_name === budgetName
     );
+
+    setSelectedBudget(budget);
     const budgetID = parseInt(budget.monthly_budget_id);
     const categoriesPerBudget = await axiosPrivate.get(
       `/api/v1/budgets/${budgetID}/categories`
     );
-    console.log("categoriesPerBudget: ", categoriesPerBudget.data);
-    setCategoriesInBudget(categoriesPerBudget.data);
+    const categoriesArray = categoriesPerBudget.data;
+    // need to parse the budget_by_category_amount to a float because it is stred as a numeric data type in postgres
+    // and is returned as a string
+    for (let i = 0; i < categoriesArray.length; i++) {
+      categoriesArray[i].budget_by_category_amount = parseFloat(
+        categoriesArray[i].budget_by_category_amount
+      );
+    }
+    setCategoriesInBudget(categoriesArray);
   };
 
   return (

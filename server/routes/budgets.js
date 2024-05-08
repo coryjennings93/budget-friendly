@@ -61,7 +61,6 @@ router
 
       // load categories into the budget_by_category table
       const categories = req.body.budget_categories;
-      console.log("Category length: ", req.body.budget_categories.length);
       for (let i = 0; i < categories.length; i++) {
         const category = categories[i];
         const category_id = await checkCategoryAndReturnID(
@@ -74,7 +73,6 @@ router
           category_id: realCategory_id,
           budget_by_category_amount: category.categoryAmount,
         };
-        console.log("Budget by category: ", budget_by_category);
         await insertIntoBudgetByCategory(budget_by_category);
       }
       const budgetsAfterPost = await getBudgets(userId);
