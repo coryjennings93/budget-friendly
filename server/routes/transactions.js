@@ -1,4 +1,8 @@
-const { getTransactions } = require("../database/queries");
+const {
+  getTransactions,
+  postTransaction,
+  getTransactionsPerBudget,
+} = require("../database/queries");
 const { authenticateToken } = require("../middleware/authorization");
 const { tryCatch } = require("../utils/trycatch");
 const jwt = require("jsonwebtoken");
@@ -27,11 +31,27 @@ router
       const payload = jwt.decode(req.cookies.access_token);
 
       const userId = payload.user_account_id;
-      console.log("User ID: ", userId);
       // const transactions = await postTransaction(userId);
       // res.status(200).json(transactions.rows);
-
-      res.status(200).json({ message: "Transaction added" });
+      try {
+        const result = await postTransaction({
+          user_account_id: userId,
+          transaction_date: req.body.transaction_date,
+          transaction_description: req.body.transaction_description,
+          category_id: req.body.category_id,
+          transaction_amount: req.body.transaction_amount,
+          monthly_budget_id: req.body.monthly_budget_id,
+        });
+        console.log("Result: ", result);
+        const transactionsAfterPost = await getTransactionsPerBudget(
+          userId,
+          req.body.monthly_budget_id
+        );
+        res.status(200).json(transactionsAfterPost);
+      } catch (e) {
+        console.log("Error: ", e);
+        res.status(500).json({ message: "Error adding transaction" });
+      }
     })
   );
 

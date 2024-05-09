@@ -11,7 +11,12 @@ import { useAuth } from "@/context/AuthContext";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
 
 const SelectBudgetButton = () => {
-  const { budgets, setCategoriesInBudget, setSelectedBudget } = useAuth();
+  const {
+    budgets,
+    setCategoriesInBudget,
+    setSelectedBudget,
+    setTransactionsPerBudget,
+  } = useAuth();
 
   const axiosPrivate = useAxiosAuthInstance();
 
@@ -19,7 +24,6 @@ const SelectBudgetButton = () => {
     const budget = budgets.find(
       (element) => element.monthly_budget_name === budgetName
     );
-
     setSelectedBudget(budget);
     const budgetID = parseInt(budget.monthly_budget_id);
     const categoriesPerBudget = await axiosPrivate.get(
@@ -34,6 +38,12 @@ const SelectBudgetButton = () => {
       );
     }
     setCategoriesInBudget(categoriesArray);
+
+    // get transactions for the selected budget
+    const transactionsPerBudget = await axiosPrivate.get(
+      `/api/v1/budgets/${budgetID}/transactions`
+    );
+    setTransactionsPerBudget(transactionsPerBudget);
   };
 
   return (

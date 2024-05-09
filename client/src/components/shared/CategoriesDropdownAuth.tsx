@@ -10,19 +10,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "@/context/AuthContext";
 
-const CategoriesDropdown = ({}) => {
-  const {
-    categoriesDemo,
-    setCategoriesDemo,
-    filterByCategory,
-    isChecked,
-    setIsChecked,
-  } = useExpensesDemo();
+const CategoriesDropdownAuth = ({}) => {
+  const { categoriesInBudget } = useAuth();
+  console.log("categoriesInBudget", categoriesInBudget);
+
+  const [isChecked, setIsChecked] = React.useState<string[]>([]);
 
   const [isAllChecked, setIsAllChecked] = React.useState(() => {
     return isChecked.length === 0 ? true : false;
   });
+
+  React.useEffect(() => {
+    if (isChecked.length === 0) {
+      setIsAllChecked(true);
+    }
+  }, [isChecked]);
+
+  React.useEffect(() => {
+    if (isAllChecked) {
+      setIsChecked([]);
+    }
+  }, [isAllChecked]);
 
   const all = "All";
 
@@ -46,53 +56,43 @@ const CategoriesDropdown = ({}) => {
               setIsAllChecked(true);
             } else {
               setIsAllChecked(newCheckedState);
-              // set all other categories to unchecked
-              const updatedCategories = categoriesDemo.map((category) => {
-                return { ...category, isChecked: false };
-              });
-              setCategoriesDemo(updatedCategories);
+
               // reset the isChecked array
-              setIsChecked([]);
             }
           }}
         >
           {all}
         </DropdownMenuCheckboxItem>
         <DropdownMenuSeparator />
-        {categoriesDemo.map(
-          (category: { id: number; name: string; isChecked: boolean }) => (
+        {categoriesInBudget.map(
+          (category: {
+            budget_by_category_amount: number;
+            category_id: number;
+            category_name: string;
+            monthly_budget_id: number;
+          }) => (
             <DropdownMenuCheckboxItem
-              key={category.id}
-              checked={category.isChecked}
+              key={category.category_id}
+              checked={isChecked.includes(category.category_name)}
               onCheckedChange={(newCheckedState) => {
                 setIsAllChecked(false);
-                const updatedCategories = categoriesDemo.map(
-                  (obj: { id: number; name: string; isChecked: boolean }) =>
-                    obj.id === category.id
-                      ? { ...obj, isChecked: newCheckedState }
-                      : obj
-                );
-                setCategoriesDemo(updatedCategories);
-                // check to see if any categories are still checked; if not, check the "All" category
-                const anyChecked = updatedCategories.some(
-                  (category) => category.isChecked === true
-                );
-                if (!anyChecked) {
-                  setIsAllChecked(true);
-                }
-                // add or remove item from isChecked array
+
                 setIsChecked((prev) => {
                   if (newCheckedState) {
-                    return [...prev, category.name];
+                    return [...prev, category.category_name];
                   } else {
-                    return prev.filter((item) => item !== category.name);
+                    return prev.filter(
+                      (item) => item !== category.category_name
+                    );
                   }
                 });
 
-                // filterByCategory(category.name);
+                if (isChecked.includes(category.category_name)) {
+                  setIsAllChecked(false);
+                }
               }}
             >
-              {category.name}
+              {category.category_name}
             </DropdownMenuCheckboxItem>
           )
         )}
@@ -101,4 +101,4 @@ const CategoriesDropdown = ({}) => {
   );
 };
 
-export default CategoriesDropdown;
+export default CategoriesDropdownAuth;

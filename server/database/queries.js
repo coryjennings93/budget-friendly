@@ -96,32 +96,42 @@ const getTransactions = async (user_id) => {
   return transactions;
 };
 
-const postTransaction = async (
-  user_id,
+const postTransaction = async ({
+  user_account_id,
   transaction_date,
   transaction_description,
-  transaction_type,
   category_id,
-  bank_account_id,
-  transaction_amount
-) => {
+  transaction_amount,
+  monthly_budget_id,
+}) => {
+  const transaction_type = "expense";
+  const bank_account_id = null;
   try {
-    await pool.query(
-      "INSERT INTO transaction (user_account_id, transaction_date, transaction_description, transaction_type, category_id, bank_account_id, transaction_amount) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+    const results = await pool.query(
+      "INSERT INTO transaction (user_account_id, transaction_date, transaction_description, transaction_type, category_id, bank_account_id, transaction_amount, monthly_budget_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
-        user_id,
+        user_account_id,
         transaction_date,
         transaction_description,
         transaction_type,
         category_id,
         bank_account_id,
         transaction_amount,
+        monthly_budget_id,
       ]
     );
-    return;
+    return results.rows;
   } catch (e) {
     throw new QueryError(e);
   }
+};
+
+const getTransactionsPerBudget = async (user_id, budget_id) => {
+  const transactions = await pool.query(
+    "SELECT * FROM transaction WHERE user_account_id = $1 AND monthly_budget_id = $2",
+    [user_id, budget_id]
+  );
+  return transactions.rows;
 };
 
 // get all budgets for a user
@@ -237,4 +247,6 @@ module.exports = {
   checkCategoryAndReturnID,
   postCategory,
   insertIntoBudgetByCategory,
+  getTransactionsPerBudget,
+  postTransaction,
 };

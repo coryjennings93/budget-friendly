@@ -30,7 +30,6 @@ export const LoginValidation = z.object({
   password: z.string().min(1, {message: 'Please enter your password.'}).max(15, {message: 'Password cannot be over 15 characters.'})});
 
   export const AddExpenseValidation = z.object({
-    transactionType: z.string().min(1, {message: 'Please select a transaction type.'}),
     date: z.date({
       required_error: "A date of transaction is needed.",
     }),

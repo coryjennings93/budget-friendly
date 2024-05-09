@@ -11,6 +11,7 @@ CREATE TABLE transaction (
   category_id integer DEFAULT 'Uncategorized' REFERENCES category(category_id) ON DELETE CASCADE ON UPDATE CASCADE,
   bank_account_id integer REFERENCES bank_account(bank_account_id) ON DELETE CASCADE ON UPDATE CASCADE,
   transaction_amount decimal NOT NULL
+  monthly_budget_id integer NOT NULL REFERENCES monthly_budget(monthly_budget_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 

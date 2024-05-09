@@ -1,6 +1,31 @@
 import { useAuth } from "@/context/AuthContext";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
 import { EditBudgetValidation } from "@/utils/validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import LogoIcon from "../icons/LogoIcon";
+import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import AddCategory from "../shared/AddCategory";
+import { Button } from "../ui/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const EditBudgetForm = () => {
   const { categoriesInBudget, selectedBudget, user, categories, setBudgets } =

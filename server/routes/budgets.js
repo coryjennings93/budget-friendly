@@ -5,6 +5,7 @@ const {
   getBudgets,
   getCategoriesPerBudget,
   insertIntoBudgetByCategory,
+  getTransactionsPerBudget,
 } = require("../database/queries");
 const { authenticateToken } = require("../middleware/authorization");
 const { tryCatch } = require("../utils/trycatch");
@@ -87,7 +88,7 @@ router.route("/:budget/categories").get(
     const budgetId = req.params.budget;
     console.log("Budget ID: ", budgetId);
     const accessToken = req.cookies.access_token;
-    payload = jwt.decode(accessToken);
+    const payload = jwt.decode(accessToken);
     const userId = payload.user_account_id;
     const categories = await getCategoriesPerBudget(userId, budgetId);
     console.log("Categories per: ", categories);
@@ -98,5 +99,18 @@ router.route("/:budget/categories").get(
 // update budget
 
 // delete budget
+
+// get transactions for a budget
+router.route("/:budget/transactions").get(
+  authenticateToken,
+  tryCatch(async (req, res, next) => {
+    const budgetId = req.params.budget;
+    const accessToken = req.cookies.access_token;
+    const payload = jwt.decode(accessToken);
+    const userId = payload.user_account_id;
+    const transactions = await getTransactionsPerBudget(userId, budgetId);
+    res.status(200).json(transactions);
+  })
+);
 
 module.exports = router;

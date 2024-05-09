@@ -47,7 +47,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     null
   );
   const [categoriesInBudget, setCategoriesInBudget] = useState(null);
-  const [transactionsInBudget, setTransactionsInBudget] = useState(null);
+  const [transactionsPerBudget, setTransactionsPerBudget] = useState(null);
   const [authenticatedUser, setAuthenticatedUser] = useState(false);
 
   const axiosPrivate = useAxiosAuthInstance();
@@ -136,7 +136,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     }
   }, []);
 
-  // find out if there is an authenticated userwhen page refreshes
+  // find out if there is an authenticated user when page refreshes
   useEffect(() => {
     const isUserAuthenticated = async () => {
       try {
@@ -190,16 +190,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       } else {
         console.log("Error fetching categories: ", categoriesResponse);
       }
-      const transactionsResponse = await axiosPrivate.get(
-        "/api/v1/transactions"
-      );
-      if (transactionsResponse.statusText === "OK") {
-        const transactionsData = await transactionsResponse.data;
-        console.log("transactionsData: ", transactionsData);
-        setTransactions(transactionsData);
-      } else {
-        console.log("Error fetching transactions: ", transactionsResponse);
-      }
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching user data: ", error);
@@ -326,6 +317,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         categoriesInBudget,
         setCategoriesInBudget,
         authenticatedUser,
+        transactionsPerBudget,
+        setTransactionsPerBudget,
       }}
     >
       {loading ? null : children}

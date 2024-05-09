@@ -26,7 +26,7 @@ export const ExpensesDemoContextProvider = ({
 }: ExpensesDemoContextProviderProps) => {
   const [expenses, setExpenses] = useLocalStorage("expenses", demoExpenses);
 
-  const [categories, setCategories] = useLocalStorage("categories", [
+  const [categoriesDemo, setCategoriesDemo] = useLocalStorage("categories", [
     { id: uuidv4(), name: "Transportation", isChecked: false },
     { id: uuidv4(), name: "Restaurant", isChecked: false },
     { id: uuidv4(), name: "Wardrobe", isChecked: false },
@@ -120,11 +120,11 @@ export const ExpensesDemoContextProvider = ({
   };
 
   const addCategory = ({ name }) => {
-    setCategories((prevCategories) => {
-      if (prevCategories.find((category) => category.name === name)) {
-        return prevCategories;
+    setCategoriesDemo((prevCategoriesDemo) => {
+      if (prevCategoriesDemo.find((category) => category.name === name)) {
+        return prevCategoriesDemo;
       }
-      return [...prevCategories, { id: uuidv4(), name, isChecked: false }];
+      return [...prevCategoriesDemo, { id: uuidv4(), name, isChecked: false }];
     });
   };
 
@@ -172,7 +172,7 @@ export const ExpensesDemoContextProvider = ({
   };
 
   const deleteCategory = (id, category) => {
-    setCategories((prevCategory) => {
+    setCategoriesDemo((prevCategory) => {
       return prevCategory.filter((cateory) => cateory.id !== id);
     });
 
@@ -190,8 +190,8 @@ export const ExpensesDemoContextProvider = ({
     <ExpensesDemoContext.Provider
       value={{
         expenses,
-        setCategories,
-        categories,
+        setCategoriesDemo,
+        categoriesDemo,
         isChecked,
         setIsChecked,
         addExpense,

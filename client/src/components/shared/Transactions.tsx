@@ -2,7 +2,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "../ui/button";
 import AddCategory from "./AddCategory";
 import AddExpense from "./AddExpense";
-import CategoriesDropdown from "./CategoriesDropdown";
+import CategoriesDropdownAuth from "./CategoriesDropdownAuth";
 import DeleteCategoryButton from "./DeleteCategoryButton";
 import ExpensesList from "./ExpensesList";
 import FilterByDateButton from "./FilterByDateButton";
@@ -15,7 +15,7 @@ const Transactions = () => {
       <div className="flex justify-center">
         <div className="flex max-w-[768px] w-full gap-1 my-1">
           <div>
-            <CategoriesDropdown />
+            <CategoriesDropdownAuth />
           </div>
           <div>
             <AddCategory />

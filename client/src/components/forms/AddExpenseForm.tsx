@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { add, format, set } from "date-fns";
 import { useExpensesDemo } from "@/context";
 import LogoIcon from "../icons/LogoIcon";
 import AddCategory from "../shared/AddCategory";
@@ -40,21 +40,26 @@ import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
 import { formatCostBasedOnTransactionType } from "@/utils/utils";
 
 const AddExpenseForm = () => {
-  const { categories, addExpense } = useExpensesDemo();
-  const categoriesList = categories.map((category: string) => category.name);
-  const { user } = useAuth();
+  const { categoriesDemo, addExpense } = useExpensesDemo();
+  const { user, selectedBudget, categories, setTransactionsPerBudget } =
+    useAuth();
   const axiosPrivate = useAxiosAuthInstance();
   const [serverErrors, setServerErrors] = useState(null);
   // check to see if the AddCategory Dialog form is open and prevent the onSubmit behavior of this form
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
   // pass this function handler down through props to the AddCategory component to control above state based on if the AddCategory Dialog form is open or closed
   const handleIsOpen = () => setIsAddCategoryOpen(!isAddCategoryOpen);
+  console.log("Categories: ", categories);
+  // category list depending on if user is authenticated or not
+  const categoriesList = user
+    ? categories.map((category) => category.category_name)
+    : categoriesDemo.map((category) => category.name);
+  console.log("Categories List: ", categoriesList);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof AddExpenseValidation>>({
     resolver: zodResolver(AddExpenseValidation),
     defaultValues: {
-      transactionType: undefined,
       date: undefined,
       cost: undefined,
       category: "",
@@ -66,51 +71,45 @@ const AddExpenseForm = () => {
   async function onSubmit(values: z.infer<typeof AddExpenseValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values.transactionType);
-    values.cost = formatCostBasedOnTransactionType(
-      values.transactionType,
-      values.cost
-    );
-    console.log(values.cost);
-    return;
+    if (!user) {
+      addExpense(values);
+      form.reset();
+      return;
+    }
+
+    console.log("Selected budget from addExpenseForm: ", selectedBudget);
+    console.log(values);
     try {
-      if (!user) {
-        addExpense(values);
-        //   await new Promise((resolve) => setTimeout(resolve, 1000));
-        //   throw new Error();
-        form.reset();
-      } else {
-        try {
-          // define transaction
-          const transaction = {
-            user: user.id,
-            date: values.date,
-            cost: values.cost,
-            category: values.category,
-            type: values.transactionType,
-            transactionDescription: values.transactionDescription,
-            bank_account: "main",
-          };
+      // get category ID
+      const category = categories.find(
+        (category) => category.category_name === values.category
+      );
+      // define transaction
+      const transaction = {
+        user_id: user.id,
+        transaction_date: values.date,
+        transaction_description: values.transactionDescription,
+        category_id: category.category_id,
+        transaction_amount: values.cost,
+        monthly_budget_id: selectedBudget.monthly_budget_id,
+      };
 
-          const response = await axiosPrivate
-            .post("/api/v1/transactions", transaction)
-            .catch((error) => {
-              console.error(error);
-              setServerErrors(error);
-            });
-
-          setServerErrors(null);
-          form.reset();
-          return;
-        } catch (error) {
+      const response = await axiosPrivate
+        .post("/api/v1/transactions", transaction)
+        .then((response) => {
+          if (response.status === 201) {
+            setTransactionsPerBudget(response.data);
+          }
+          console.log("Response.data: ", response.data);
+        })
+        .catch((error) => {
           console.error(error);
-          setServerErrors([
-            { message: "An unexpected error has occured." },
-            { message: "Please try again." },
-          ]);
-        }
-        form.reset();
-      }
+          setServerErrors(error);
+        });
+
+      setServerErrors(null);
+      form.reset();
+      return;
     } catch (error) {
       form.setError("root", {
         message: "There was an error saving your expense. Please try again.",
@@ -120,7 +119,7 @@ const AddExpenseForm = () => {
   return (
     <>
       {serverErrors && (
-        <ul className="p-4 mb-6 font-bold bg-red-300 border-2 rounded-md border-slate-400">
+        <ul className="p-4 mb-4 mt-4 font-bold bg-red-300 border-2 rounded-md border-slate-400">
           {serverErrors.map((error, key) => {
             console.log(error);
             return (
@@ -138,7 +137,9 @@ const AddExpenseForm = () => {
           <LogoIcon width="w-24" />
 
           <form
-            onSubmit={!isAddCategoryOpen && form.handleSubmit(onSubmit)}
+            onSubmit={
+              !isAddCategoryOpen ? form.handleSubmit(onSubmit) : undefined
+            }
             className="flex flex-col w-full gap-3 mt-4"
           >
             <div className="flex flex-col mt-2 sm:flex-wrap sm:flex-row">
@@ -230,7 +231,10 @@ const AddExpenseForm = () => {
                       </SelectContent>
                     </Select>
                     <div onClick={() => console.log()}>
-                      <AddCategory handleIsOpen={handleIsOpen} />
+                      <AddCategory
+                        handleIsOpen={handleIsOpen}
+                        fromCreateBudget={false}
+                      />
                     </div>
                   </div>
                   <FormMessage />

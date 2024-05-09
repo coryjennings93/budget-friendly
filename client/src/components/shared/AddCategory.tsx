@@ -11,7 +11,12 @@ import { Button } from "../ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
-const AddCategory = ({ handleIsOpen, fromCreateBudget }) => {
+interface AddCategoryProps {
+  handleIsOpen: () => void;
+  fromCreateBudget: boolean;
+}
+
+const AddCategory = ({ handleIsOpen, fromCreateBudget }: AddCategoryProps) => {
   return (
     <Dialog onOpenChange={handleIsOpen}>
       <DialogTrigger asChild>
