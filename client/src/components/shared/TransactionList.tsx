@@ -16,17 +16,31 @@ import { useViewport } from "@/hooks/useViewport";
 import ExpenseCard from "./ExpenseCard";
 import { useEffect, useState } from "react";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
+import { useAuth } from "@/context/AuthContext";
+import TransactionRow from "./TransactionRow";
+
+interface ITransaction {
+  bank_account_id?: number;
+  category_id: number;
+  monthly_budget_id: number;
+  transaction_amount: number;
+  transaction_date: Date | string;
+  transaction_description: string;
+  transaction_id: number;
+  transaction_type: string;
+  user_account_id: number;
+}
 
 const TransactionList = () => {
-  const axiosPrivate = useAxiosAuthInstance();
-  const [transactions, setTransactions] = useState([]);
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      const response = await axiosPrivate.get("/api/v1/transactions");
-      setTransactions(response.data.transactions);
-    };
-    fetchTransactions();
-  }, []);
+  const { transactionsPerBudget, categoriesInBudget } = useAuth();
+  console.log(
+    "transactionsPerBudget from TransactionList",
+    transactionsPerBudget
+  );
+
+  if (!transactionsPerBudget || !categoriesInBudget) {
+    return <p>Loading...</p>;
+  }
 
   const { width } = useViewport();
   //   transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -34,29 +48,31 @@ const TransactionList = () => {
   //   if (filteredByDate.length > 0) {
   //   }
 
-  //   const renderExpense = (expense) => {
-  //     // console.log(filteredByDate);
-  //     // console.log(expense.id);
+  const renderExpense = (expense) => {
+    console.log("HIIIIIIIIIIII I am running before TransactionRow");
+    <TransactionRow expense={expense} />;
 
-  //     if (filteredByDate.length === 0 && isChecked.length === 0) {
-  //       if (!dateFilter) {
-  //         return <ExpenseRow expense={expense} />;
-  //       }
-  //       return;
-  //     } else if (
-  //       filteredByDate.length === 0 &&
-  //       isChecked.includes(expense.category)
-  //     ) {
-  //       return <ExpenseRow expense={expense} />;
-  //     } else if (isChecked.length === 0 && filteredByDate.includes(expense)) {
-  //       return <ExpenseRow expense={expense} />;
-  //     } else {
-  //       return (
-  //         filteredByDate.includes(expense) &&
-  //         isChecked.includes(expense.category) && <ExpenseRow expense={expense} />
-  //       );
-  //     }
-  //   };
+    // console.log(filteredByDate);
+    // console.log(expense.id);
+    // if (filteredByDate.length === 0 && isChecked.length === 0) {
+    //   if (!dateFilter) {
+    //     return <ExpenseRow expense={expense} />;
+    //   }
+    //   return;
+    // } else if (
+    //   filteredByDate.length === 0 &&
+    //   isChecked.includes(expense.category)
+    // ) {
+    //   return <ExpenseRow expense={expense} />;
+    // } else if (isChecked.length === 0 && filteredByDate.includes(expense)) {
+    //   return <ExpenseRow expense={expense} />;
+    // } else {
+    //   return (
+    //     filteredByDate.includes(expense) &&
+    //     isChecked.includes(expense.category) && <ExpenseRow expense={expense} />
+    //   );
+    // }
+  };
 
   if (width >= MEDIUM_SCREEN_SIZE) {
     return (
@@ -72,7 +88,9 @@ const TransactionList = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {/* {transactions.map((expense) => renderExpense(expense))} */}
+            {transactionsPerBudget.map((expense: ITransaction) => (
+              <TransactionRow key={expense.transaction_id} expense={expense} />
+            ))}
           </TableBody>
           <TableFooter>
             <TableRow>

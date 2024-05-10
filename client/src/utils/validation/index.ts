@@ -77,7 +77,6 @@ export const CreateBudgetValidation = z.object({
 })
 
 export const EditBudgetValidation = z.object({
-  id: z.number(),
   budgetName: z.string().min(1, {message: 'Please enter a name for your budget.'}),
   month: z.string().min(1, {message: 'Please select a month.'}),
   year: z.string().min(1, {message: 'Please select a year.'}),

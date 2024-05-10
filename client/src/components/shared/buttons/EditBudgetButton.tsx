@@ -10,9 +10,17 @@ import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import CreateBudgetForm from "@/components/forms/CreateBudgetForm";
 import EditBudgetForm from "@/components/forms/EditBudgetForm";
 
-const EditBudgetButton = () => {
+interface EditBudgetButtonProps {
+  handleIsOpen: () => void;
+  fromAddTransaction: boolean;
+}
+
+const EditBudgetButton = ({
+  handleIsOpen,
+  fromAddTransaction,
+}: EditBudgetButtonProps) => {
   return (
-    <Dialog>
+    <Dialog onOpenChange={fromAddTransaction ? handleIsOpen : undefined}>
       <DialogTrigger asChild>
         <Button title="edit budget">
           <FontAwesomeIcon icon={faPenToSquare} />

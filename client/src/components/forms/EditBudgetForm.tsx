@@ -2,7 +2,7 @@ import { useAuth } from "@/context/AuthContext";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
 import { EditBudgetValidation } from "@/utils/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -26,10 +26,30 @@ import AddCategory from "../shared/AddCategory";
 import { Button } from "../ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import CurrencyInput from "react-currency-input-field";
 
 const EditBudgetForm = () => {
-  const { categoriesInBudget, selectedBudget, user, categories, setBudgets } =
-    useAuth();
+  const {
+    categoriesInBudget,
+    setCategoriesInBudget,
+    selectedBudget,
+    setSelectedBudget,
+    user,
+    categories,
+    setBudgets,
+  } = useAuth();
+
+  // create the default values for the categories array
+  const defaultCategories = categoriesInBudget.map((category) => ({
+    category: category.category_name,
+    categoryAmount: category.budget_by_category_amount.toString(),
+  }));
+
+  console.log("defaultCategories: ", defaultCategories);
+
+  useEffect(() => {
+    console.log("selectedBudget: ", selectedBudget);
+  }, [selectedBudget]);
 
   const categoriesList = categories.map(
     (category: {
@@ -53,8 +73,15 @@ const EditBudgetForm = () => {
       budgetName: selectedBudget.monthly_budget_name,
       month: selectedBudget.monthly_budget_month,
       year: selectedBudget.monthly_budget_year,
-      budgetAmount: selectedBudget.monthly_budget_amount,
-      //   categories: categoriesInBudget
+      budgetAmount: selectedBudget.monthly_budget_amount.toString(),
+      categories: defaultCategories,
+    },
+    values: {
+      budgetName: selectedBudget.monthly_budget_name,
+      month: selectedBudget.monthly_budget_month,
+      year: selectedBudget.monthly_budget_year,
+      budgetAmount: selectedBudget.monthly_budget_amount.toString(),
+      categories: defaultCategories,
     },
   });
 
@@ -65,11 +92,11 @@ const EditBudgetForm = () => {
 
   // Function to calculate the total amount of categories
   const calculateTotalCategoriesAmount = (
-    categories: { category: string; categoryAmount: string }[]
+    categories: { category: string; categoryAmount: number }[]
   ) => {
     return categories.reduce(
       (total: number, category: { category: string; categoryAmount: number }) =>
-        total + parseFloat(category.categoryAmount),
+        total + category.categoryAmount,
       0
     );
   };
@@ -78,11 +105,8 @@ const EditBudgetForm = () => {
   async function onSubmit(values: z.infer<typeof EditBudgetValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    console.log("HII from onSubmit");
 
-    const validCategories = values.categories.filter(
-      (category) => category.category && category.categoryAmount
-    );
-    console.log("validCategories: ", validCategories);
     if (
       calculateTotalCategoriesAmount(values.categories) !== values.budgetAmount
     ) {
@@ -93,22 +117,36 @@ const EditBudgetForm = () => {
       });
       return;
     }
-    console.log(values.categories);
 
-    // Remove empty category objects
-    // Construct valid categories array
-    // const validCategories = fields
-    //   .map((field) => ({
-    //     category: field.category,
-    //     categoryAmount: field.categoryAmount,
-    //   }))
-    //   .filter((category) => category.category && category.categoryAmount);
-    // console.log("validCategories: ", validCategories);
-    // console.log("fields: ", fields);
+    // update the categoriesInBudget state
+    setCategoriesInBudget(() => {
+      const categoriesInBudgetObject = validCategories.map((category) => ({
+        category_name: category.category,
+        budget_by_category_amount: category.categoryAmount,
+      }));
+      return categoriesInBudgetObject;
+    });
+
+    // update selectedBudget state
+    setSelectedBudget(() => {
+      const selectedBudgetObject = {
+        ...selectedBudget,
+        monthly_budget_name: values.budgetName,
+        monthly_budget_month: values.month,
+        monthly_budget_year: values.year,
+        monthly_budget_amount: values.budgetAmount,
+      };
+      return selectedBudgetObject;
+    });
+
+    // update categoriesInBudget state
+    console.log("categoriesInBudget: ", categoriesInBudget);
+
     try {
       try {
         // define transaction
         const budget = {
+          budget_id: selectedBudget.monthly_budget_id,
           budget_name: values.budgetName,
           budget_month: values.month,
           budget_year: values.year,
@@ -119,9 +157,10 @@ const EditBudgetForm = () => {
         console.log("budget: ", budget);
 
         const response = await axiosPrivate
-          .post("/api/v1/budgets", budget)
+          .put("/api/v1/budgets", budget)
           .then((response) => {
-            if (response.status === 201) {
+            console.log("response from put request: ", response.data);
+            if (response.statusText === "OK") {
               setBudgets(() => response.data);
             }
           })
@@ -164,9 +203,7 @@ const EditBudgetForm = () => {
       )}
       <Form {...form}>
         <div className="flex flex-col items-center justify-center">
-          <h2 className="mb-3 text-4xl font-bold gradient-text">
-            Create Budget
-          </h2>
+          <h2 className="mb-3 text-4xl font-bold gradient-text">Edit Budget</h2>
 
           <LogoIcon width="w-24" />
 
@@ -277,7 +314,9 @@ const EditBudgetForm = () => {
                       placeholder="&#36; 0.00"
                       value={field.value}
                       prefix="$ "
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value || null);
+                      }}
                       className="block h-10 px-3 py-2 text-sm font-normal border rounded-md border-input"
                     />
                   </FormControl>
@@ -340,7 +379,9 @@ const EditBudgetForm = () => {
                           placeholder="&#36; 0.00"
                           value={field.value}
                           prefix="$ "
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value || null);
+                          }}
                           className="block h-10 px-3 py-2 text-sm font-normal border rounded-md border-input"
                         />
                       </FormControl>
@@ -376,7 +417,7 @@ const EditBudgetForm = () => {
               type="submit"
               className="mt-6 text-lg"
             >
-              {form.formState.isSubmitting ? "Adding..." : "Add"}
+              {form.formState.isSubmitting ? "Editting..." : "Edit"}
             </Button>
             {form.formState.errors.root && (
               <div className="text-sm font-medium text-red-500">

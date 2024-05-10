@@ -43,7 +43,13 @@ const SelectBudgetButton = () => {
     const transactionsPerBudget = await axiosPrivate.get(
       `/api/v1/budgets/${budgetID}/transactions`
     );
-    setTransactionsPerBudget(transactionsPerBudget);
+    // convert transaction_amount to a float because it is stored as a decimal type in postgres and is returned as a string
+    for (let i = 0; i < transactionsPerBudget.data.length; i++) {
+      transactionsPerBudget.data[i].transaction_amount = parseFloat(
+        transactionsPerBudget.data[i].transaction_amount
+      );
+    }
+    setTransactionsPerBudget(transactionsPerBudget.data);
   };
 
   return (

@@ -38,11 +38,18 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
 import { formatCostBasedOnTransactionType } from "@/utils/utils";
+import EditBudgetForm from "./EditBudgetForm";
+import EditBudgetButton from "../shared/buttons/EditBudgetButton";
 
 const AddExpenseForm = () => {
   const { categoriesDemo, addExpense } = useExpensesDemo();
-  const { user, selectedBudget, categories, setTransactionsPerBudget } =
-    useAuth();
+  const {
+    user,
+    selectedBudget,
+    categories,
+    setTransactionsPerBudget,
+    categoriesInBudget,
+  } = useAuth();
   const axiosPrivate = useAxiosAuthInstance();
   const [serverErrors, setServerErrors] = useState(null);
   // check to see if the AddCategory Dialog form is open and prevent the onSubmit behavior of this form
@@ -50,9 +57,10 @@ const AddExpenseForm = () => {
   // pass this function handler down through props to the AddCategory component to control above state based on if the AddCategory Dialog form is open or closed
   const handleIsOpen = () => setIsAddCategoryOpen(!isAddCategoryOpen);
   console.log("Categories: ", categories);
+
   // category list depending on if user is authenticated or not
   const categoriesList = user
-    ? categories.map((category) => category.category_name)
+    ? categoriesInBudget.map((category) => category.category_name)
     : categoriesDemo.map((category) => category.name);
   console.log("Categories List: ", categoriesList);
 
@@ -231,10 +239,17 @@ const AddExpenseForm = () => {
                       </SelectContent>
                     </Select>
                     <div onClick={() => console.log()}>
-                      <AddCategory
-                        handleIsOpen={handleIsOpen}
-                        fromCreateBudget={false}
-                      />
+                      {user ? (
+                        <EditBudgetButton
+                          handleIsOpen={handleIsOpen}
+                          fromAddTransaction={true}
+                        />
+                      ) : (
+                        <AddCategory
+                          handleIsOpen={handleIsOpen}
+                          fromCreateBudget={false}
+                        />
+                      )}
                     </div>
                   </div>
                   <FormMessage />

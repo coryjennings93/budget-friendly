@@ -168,6 +168,25 @@ const postBudget = async ({
   }
 };
 
+// Update Budget
+const updateBudget = async (budget) => {
+  try {
+    const results = await pool.query(
+      "UPDATE monthly_budget SET monthly_budget_amount = $1, monthly_budget_month = $2, monthly_budget_year = $3, monthly_budget_name = $4 WHERE monthly_budget_id = $5",
+      [
+        budget.monthly_budget_amount,
+        budget.monthly_budget_month,
+        budget.monthly_budget_year,
+        budget.monthly_budget_name,
+        budget.monthly_budget_id,
+      ]
+    );
+    return;
+  } catch (e) {
+    throw new QueryError(e);
+  }
+};
+
 const getCategories = async (user_id) => {
   const categories = await pool.query(
     "SELECT * FROM category WHERE user_account_id = $1",
@@ -230,6 +249,34 @@ const insertIntoBudgetByCategory = async ({
   }
 };
 
+const updateBudgetByCategory = async ({
+  monthly_budget_id,
+  category_id,
+  budget_by_category_amount,
+}) => {
+  try {
+    await pool.query(
+      "UPDATE budget_by_category SET budget_by_category_amount = $1 WHERE monthly_budget_id = $2 AND category_id = $3",
+      [budget_by_category_amount, monthly_budget_id, category_id]
+    );
+    return;
+  } catch (e) {
+    throw new QueryError(e);
+  }
+};
+
+const deleteBudgetByCategory = async (monthly_budget_id) => {
+  try {
+    await pool.query(
+      "DELETE FROM budget_by_category WHERE monthly_budget_id = $1",
+      [monthly_budget_id]
+    );
+    return;
+  } catch (e) {
+    throw new QueryError(e);
+  }
+};
+
 module.exports = {
   getEmail,
   addNewUser,
@@ -249,4 +296,6 @@ module.exports = {
   insertIntoBudgetByCategory,
   getTransactionsPerBudget,
   postTransaction,
+  updateBudget,
+  deleteBudgetByCategory,
 };
