@@ -1,15 +1,12 @@
-import React, {
+import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
-  useReducer,
   useState,
 } from "react";
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import useAxiosAuthInstance from "@/hooks/useAxiosAuthInstance";
-import { useCategories } from "@/hooks/useCategories";
-import { useBudgets } from "@/hooks/useBudgets";
 
 type User = {
   id: number;
@@ -49,128 +46,122 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [categoriesInBudget, setCategoriesInBudget] = useState(null);
   const [transactionsPerBudget, setTransactionsPerBudget] = useState(null);
   const [authenticatedUser, setAuthenticatedUser] = useState(false);
+  const [logoutTimer, setLogoutTimer] =
+    useState<() => ReturnType<typeof setTimeout> | null>(null);
 
   const axiosPrivate = useAxiosAuthInstance();
 
-  // useEffect(() => {
-  //   console.log("AuthContextProvider budgets: ", budgets);
-  // }, []);
+  const refreshTokenExpiry: number = 6000001; // 100 minutes
+  const testExpiry: number = 15000; // 15 seconds
 
-  // useEffect(() => {
-  //   console.log("AuthContextProvider user: ", user);
-  // }, []);
+  useEffect(() => {
+    console.log("accessToken: ", accessToken);
+  }, [accessToken]);
 
-  // useEffect(() => {
-  //   console.log("AuthContextProvider categories: ", categories);
-  // }, [categories]);
+  useEffect(() => {
+    console.log("user after being set by accessToken being set: ", user);
+  }, [user]);
 
-  // useEffect(() => {
-  //   console.log("AuthContextProvider transactions: ", transactions);
-  // }, [transactions]);
+  // create user when an access token is set
+  useEffect(() => {
+    if (accessToken) {
+      const createUserData = async () => {
+        const decoded = jwtDecode<JwtPayload>(accessToken);
+        const createUser = {
+          id: decoded.user_account_id,
+          name: decoded.user_account_name,
+          email: decoded.user_account_email,
+        };
+        setUser(createUser);
+        await fetchUserData();
+      };
+      createUserData();
+    }
+  }, [accessToken]);
 
-  // useEffect(() => {
-  //   if (selectedBudget) {
-  //     const fetchCategoriesInBudget = async () => {
-  //       try {
-  //         const categoriesResponse = await axiosPrivate.get(
-  //           `/api/v1/budgets/${selectedBudget.monthly_budget_id}/categories`
-  //         );
-  //         if (categoriesResponse.statusText === "OK") {
-  //           const categoriesData = await categoriesResponse.data;
-  //           console.log(
-  //             "categoriesInBudgetDataFromAuthContext: ",
-  //             categoriesData
-  //           );
-  //           // setCategoriesInBudget(categoriesData);
-  //         } else {
-  //           console.log("Error fetching categories: ", categoriesResponse);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching categories: ", error);
-  //       }
-  //     };
-  //     fetchCategoriesInBudget();
-  //   }
-  // }, [selectedBudget]);
+  // set a timer to auto log the user out if the refresh token expires
+  useEffect(() => {
+    console.log("timer set");
+    const timer: ReturnType<typeof setTimeout> = setTimeout(() => {
+      console.log("runnings timer");
+      logoutUser();
+    }, testExpiry);
+    // Store the timer in state to clear it when component unmounts
+
+    setLogoutTimer(logoutTimer);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // verify that there is a valid access token when the page loads
-  useEffect(() => {
-    if (user) {
-      const fetchData = async () => {
-        await fetch("http://localhost:4000/api/v1/verifyAccessToken", {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              return response.json();
-            }
-            throw response;
-          })
-          .then((data) => {
-            if (data.accessToken) {
-              setAccessToken(data.accessToken);
-              const decoded = jwtDecode<JwtPayload>(data.accessToken);
-              const createUser = {
-                id: decoded.user_account_id,
-                name: decoded.user_account_name,
-                email: decoded.user_account_email,
-              };
-              setUser(createUser);
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-            setUser(null);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      };
-      fetchData();
-    } else {
-      setLoading(false);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (user) {
+  //     const fetchData = async () => {
+  //       await fetch("http://localhost:4000/api/v1/verifyAccessToken", {
+  //         method: "GET",
+  //         credentials: "include",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       })
+  //         .then((response) => {
+  //           if (response.ok) {
+  //             return response.json();
+  //           }
+  //           throw response;
+  //         })
+  //         .then((data) => {
+  //           if (data.accessToken) {
+  //             setAccessToken(data.accessToken);
+  //             const decoded = jwtDecode<JwtPayload>(data.accessToken);
+  //             const createUser = {
+  //               id: decoded.user_account_id,
+  //               name: decoded.user_account_name,
+  //               email: decoded.user_account_email,
+  //             };
+  //             setUser(createUser);
+  //           }
+  //         })
+  //         .catch((error) => {
+  //           console.error(error);
+  //           setUser(null);
+  //         })
+  //         .finally(() => {
+  //           setLoading(false);
+  //         });
+  //     };
+  //     fetchData();
+  //   } else {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   // find out if there is an authenticated user when page refreshes
-  useEffect(() => {
-    const isUserAuthenticated = async () => {
-      try {
-        const checkAuthentication = await axiosPrivate.get(
-          "/api/v1/authenticated"
-        );
-        console.log("checkAuthentication: ", checkAuthentication);
-        if (checkAuthentication.statusText === "OK") {
-          setAuthenticatedUser(true);
-          // set user again
-          const accessToken = checkAuthentication.data.accessToken;
+  // useEffect(() => {
+  //   const isUserAuthenticated = async () => {
+  //     try {
+  //       const checkAuthentication = await axiosPrivate.get(
+  //         "/api/v1/authenticated"
+  //       );
+  //       if (checkAuthentication?.statusText === "OK") {
+  //         setAuthenticatedUser(true);
+  //         // set user again
+  //         const accessToken = checkAuthentication.data.accessToken;
+  //         setAccessToken(accessToken);
 
-          // define user
-          const decoded = jwtDecode<JwtPayload>(accessToken);
-          console.log("decoded Token: ", decoded);
-          const createUser = {
-            id: decoded.user_account_id,
-            name: decoded.user_account_name,
-            email: decoded.user_account_email,
-          };
-          setUser(createUser);
-          await fetchUserData();
-          setLoading(false);
-        } else {
-          console.log("Error verifying authentication: ", checkAuthentication);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Error verifying authentication: ", error);
-        setLoading(false);
-      }
-    };
-    isUserAuthenticated();
-  }, []);
+  //         await fetchUserData();
+  //         setLoading(false);
+  //       } else {
+  //         console.log("Error verifying authentication: ", checkAuthentication);
+  //         setLoading(false);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error verifying authentication: ", error);
+  //       setLoading(false);
+  //     }
+  //   };
+  //   isUserAuthenticated();
+  // }, []);
 
   const fetchUserData = async () => {
     try {
@@ -198,53 +189,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (user) {
-  //     const fetchUserData = async () => {
-  //       try {
-  //         const budgetsResponse = await axiosPrivate.get("/api/v1/budgets");
-  //         if (budgetsResponse.statusText === "OK") {
-  //           const budgetsData = await budgetsResponse.data;
-  //           console.log("budgetsData: ", budgetsData);
-  //           setBudgets(budgetsData);
-  //         } else {
-  //           console.log("Error fetching budgets: ", budgetsResponse);
-  //         }
-  //         const categoriesResponse = await axiosPrivate.get(
-  //           "/api/v1/categories"
-  //         );
-  //         if (categoriesResponse.statusText === "OK") {
-  //           const categoriesData = await categoriesResponse.data;
-  //           console.log("categoriesData: ", categoriesData);
-  //           setCategories(categoriesData);
-  //         } else {
-  //           console.log("Error fetching categories: ", categoriesResponse);
-  //         }
-  //         const transactionsResponse = await axiosPrivate.get(
-  //           "/api/v1/transactions"
-  //         );
-  //         if (transactionsResponse.statusText === "OK") {
-  //           const transactionsData = await transactionsResponse.data;
-  //           console.log("transactionsData: ", transactionsData);
-  //           setTransactions(transactionsData);
-  //         } else {
-  //           console.log("Error fetching transactions: ", transactionsResponse);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching user data: ", error);
-  //       }
-  //     };
-  //     fetchUserData();
-  //     console.log("userDataFetched");
-  //     setLoading(false);
-  //   } else {
-  //     setBudgets(null);
-  //     setCategories(null);
-  //     setTransactions(null);
-  //     setLoading(false);
-  //   }
-  // }, [user]);
-
   const logoutUser = async () => {
     fetch("http://localhost:4000/api/v1/logout", {
       method: "GET",
@@ -256,6 +200,7 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       .then((response) => {
         if (response.ok) {
           setUser(null);
+          setAccessToken(null);
         }
         throw response;
       })
@@ -263,40 +208,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         console.error(error);
       });
   };
-
-  // get the user categories when logged in
-  // useEffect(() => {
-  //   if (user) {
-  //     axiosPrivate
-  //       .get("/api/v1/categories")
-  //       .then((response) => {
-  //         setCategories(response.data);
-  //       })
-  //       .catch((error) => {
-  //         console.error(error);
-  //         setCategories([]);
-  //       });
-  //   } else {
-  //     setCategories([]);
-  //   }
-  // }, [user]);
-
-  // get the user's transactions when logged in
-  // useEffect(() => {
-  //   if (user) {
-  //     axiosPrivate
-  //       .get("/api/v1/transactions")
-  //       .then((response) => {
-  //         setTransactions(response.data);
-  //       })
-  //       .catch((error) => {
-  //         console.error(error);
-  //         setTransactions([]);
-  //       });
-  //   } else {
-  //     setTransactions([]);
-  //   }
-  // }, [user]);
 
   return (
     <AuthContext.Provider
@@ -321,8 +232,8 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         setTransactionsPerBudget,
       }}
     >
-      {loading ? null : children}
-      {/* {children} */}
+      {/* {loading ? null : children} */}
+      {children}
     </AuthContext.Provider>
   );
 };

@@ -19,9 +19,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 const LoginForm = () => {
-  const [serverErrors, setServerErrors] = useState(null);
+  const [serverErrors, setServerErrors] = useState<
+    { message: string }[] | null
+  >(null);
   const navigate = useNavigate();
-  const { setUser, fetchUserData } = useAuth();
+  const { setUser, fetchUserData, setAccessToken } = useAuth();
   useEffect(() => {
     console.log("serverErrors: ", serverErrors);
   }, [serverErrors]);
@@ -58,24 +60,25 @@ const LoginForm = () => {
       });
 
       if (response.ok) {
+        console.log("login was successful", response);
         const json = await response.json();
         console.log(json);
-        const accessToken = json.accessToken;
+        try {
+          const accessToken = json.accessToken;
+          setAccessToken(accessToken);
 
-        // define user
-        const decoded = jwtDecode<JwtPayload>(accessToken);
-        console.log("decoded Token: ", decoded);
-        const createUser = {
-          id: decoded.user_account_id,
-          name: decoded.user_account_name,
-          email: decoded.user_account_email,
-        };
-        setUser(createUser);
-        await fetchUserData();
+          await fetchUserData();
 
-        setServerErrors(null);
-        form.reset();
-        navigate("/dashboard");
+          setServerErrors(null);
+          form.reset();
+          navigate("/dashboard");
+        } catch (error) {
+          console.error(error);
+          setServerErrors([
+            { message: "An unexpected error has occured." },
+            { message: "Please try again." },
+          ]);
+        }
 
         if (json.errors) {
           console.error(json.errors);

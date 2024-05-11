@@ -1,12 +1,12 @@
 // this hook is used just to attach the axios interceptors to the axiosAuthInstance
 import { axiosAuthInstance } from "@/api/axios";
-import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
 import useRefreshToken from "./useRefreshToken";
-import jwtDecode from 'jwt-decode';
-import dayjs from 'dayjs';
+import { useAuth } from "@/context/AuthContext";
+
 
 const useAxiosAuthInstance = () => {
+    // const { setAccessToken } = useAuth();
     const refresh = useRefreshToken();
 
     useEffect(() => {
@@ -24,7 +24,8 @@ const useAxiosAuthInstance = () => {
                     prevRequest.sent = true;
                     try {
                         // access token is expired
-                        const newAccessToken = await refresh();
+                        const {accessToken, refreshToken} = await refresh();
+                        // setAccessToken(() => accessToken);
 
                         return axiosAuthInstance(prevRequest);
                     } catch (error) {

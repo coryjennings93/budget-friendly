@@ -17,6 +17,7 @@ import ImageCredit from "./pages/ImageCredit";
 import SiteLayout from "./components/layouts/SiteLayout";
 import SiteLayoutJustFooter from "./components/layouts/SiteLayoutJustFooter";
 import useAxiosAuthInstance from "./hooks/useAxiosAuthInstance";
+import PersistLogin from "./components/shared/PersistLogin";
 
 const Routes = () => {
   const { user, authenticatedUser } = useAuth();
@@ -53,11 +54,16 @@ const Routes = () => {
           authenticatedUser || user ? <Navigate to="/dashboard" /> : <Login />,
       },
       {
-        element: <RequireAuth />,
+        element: <PersistLogin />,
         children: [
           {
-            path: "/dashboard",
-            element: <Dashboard />,
+            element: <RequireAuth />,
+            children: [
+              {
+                path: "/dashboard",
+                element: <Dashboard />,
+              },
+            ],
           },
         ],
       },

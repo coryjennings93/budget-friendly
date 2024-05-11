@@ -4,7 +4,6 @@ import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import Transactions from "@/components/shared/Transactions";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
-import useRefreshToken from "@/hooks/useRefreshToken";
 import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
 import ExpensesCompleteTable from "@/components/shared/ExpensesCompleteTable";
 import { Link } from "react-router-dom";

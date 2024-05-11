@@ -11,6 +11,7 @@ const {
   findUserById,
   deleteRefreshToken,
   getRefreshToken,
+  addRefreshToken,
 } = require("./database/queries");
 const jwt = require("jsonwebtoken");
 const errorHandler = require("./middleware/errorHandler");
@@ -124,33 +125,38 @@ router.route("/profile").get(
 // route to provide a way to refresh the access token
 router.route("/refresh_token").get(
   tryCatch(async (req, res, next) => {
-    const refreshToken = req.cookies.refresh_token;
-    if (!refreshToken)
+    const oldRefreshToken = req.cookies.refresh_token;
+    console.log("Old refresh token: ", oldRefreshToken);
+    if (!oldRefreshToken)
       throw new AuthenticationError(
         "Access denied. No refresh token provided",
         401
       );
-
+    console.log("HI");
     // check to make sure refresh token is found in database
-    const refreshTokenInDB = await getRefreshToken(refreshToken);
+    const refreshTokenInDB = await getRefreshToken(oldRefreshToken);
+    console.log("Refresh token in DB: ", refreshTokenInDB.rows);
     if (
       refreshTokenInDB.rows.length === 0 ||
       refreshTokenInDB.rows.length > 1
     ) {
       throw new AuthenticationError("Invalid refresh token", 401);
     }
+    console.log("HII");
 
     let decodedPayload;
     try {
       decodedPayload = jwt.verify(
-        refreshToken,
+        oldRefreshToken,
         process.env.REFRESH_TOKEN_SECRET
       );
+      console.log("Decoded payload: ", decodedPayload);
     } catch (error) {
+      console.log("Error from decode: ", error);
       if (error.name === "TokenExpiredError") {
         res.clearCookie("refresh_token");
         // delete token from database
-        await deleteRefreshToken(refreshToken);
+        await deleteRefreshToken(oldRefreshToken);
         throw new AuthenticationError("Refresh token has expired", 401);
       }
       res.clearCookie("refresh_token");
@@ -175,12 +181,20 @@ router.route("/refresh_token").get(
     // if no errors above, there should be only one user record returned from the query
     const user_account_record = user_account_records.rows[0];
 
-    // check if the token needs to be refreshed
+    // refresh the tokens
     res.clearCookie("access_token");
-    let { accessToken } = generateJWTTokens(user_account_record);
+    res.clearCookie("refresh_token");
+    await deleteRefreshToken(oldRefreshToken);
+
+    let { accessToken, refreshToken } = generateJWTTokens(user_account_record);
+    // adds refresh token to the refresh_token table
+    addRefreshToken(user_account_id, refreshToken);
+
     res.cookie("access_token", accessToken, { httpOnly: true });
+    res.cookie("refresh_token", refreshToken, { httpOnly: true });
     res.status(200).json({
       accessToken,
+      refreshToken,
     });
   })
 );

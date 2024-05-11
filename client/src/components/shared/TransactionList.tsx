@@ -39,7 +39,7 @@ const TransactionList = () => {
   );
 
   if (!transactionsPerBudget || !categoriesInBudget) {
-    return <p>Loading...</p>;
+    return <h1>Loading Data...</h1>;
   }
 
   const { width } = useViewport();
