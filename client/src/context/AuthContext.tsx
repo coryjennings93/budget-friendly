@@ -36,23 +36,22 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [categories, setCategories] = useState(null);
-  // const { categories, setCategories } = useCategories();
   const [transactions, setTransactions] = useState(null);
-  // const { budgets, setBudgets } = useBudgets();
   const [budgets, setBudgets] = useState(null);
   const [selectedBudget, setSelectedBudget] = useState<SelectedBudget | null>(
     null
   );
   const [categoriesInBudget, setCategoriesInBudget] = useState(null);
   const [transactionsPerBudget, setTransactionsPerBudget] = useState(null);
+  const [filteredTransactionsPerBudget, setFilteredTransactionsPerBudget] =
+    useState([]);
   const [authenticatedUser, setAuthenticatedUser] = useState(false);
   const [logoutTimer, setLogoutTimer] =
     useState<() => ReturnType<typeof setTimeout> | null>(null);
 
   const axiosPrivate = useAxiosAuthInstance();
 
-  const refreshTokenExpiry: number = 6000001; // 100 minutes
-  const testExpiry: number = 15000; // 15 seconds
+  const refreshTokenExpiry: number = 6000000; // 100 minutes
 
   useEffect(() => {
     console.log("accessToken: ", accessToken);
@@ -79,19 +78,22 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     }
   }, [accessToken]);
 
-  // set a timer to auto log the user out if the refresh token expires
+  // set a timer to auto log the user out if the refresh token expires; the refresh token gets refreshed every time the access token does
   useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
     console.log("timer set");
     const timer: ReturnType<typeof setTimeout> = setTimeout(() => {
       console.log("runnings timer");
       logoutUser();
-    }, testExpiry);
+    }, refreshTokenExpiry);
     // Store the timer in state to clear it when component unmounts
 
     setLogoutTimer(logoutTimer);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [accessToken]);
 
   // verify that there is a valid access token when the page loads
   // useEffect(() => {
@@ -209,6 +211,52 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       });
   };
 
+  // function to help with filtering the transactions by category
+  const filterTransactionsByCategory = (categoryIDArray) => {
+    console.log("categoryIDArray: ", categoryIDArray);
+    if (!transactionsPerBudget) {
+      return [];
+    }
+    if (categoryIDArray.length === 0) {
+      setFilteredTransactionsPerBudget([]);
+      return [];
+    }
+    const filteredTransactions = [];
+
+    transactionsPerBudget.forEach((transaction) => {
+      if (categoryIDArray.includes(transaction.category_id)) {
+        filteredTransactions.push(transaction);
+      }
+    });
+    console.log("filteredTransactions: ", filteredTransactions);
+    // for (let i = 0; i < categoryIDArray.length; i++) {
+    //   const filteredTransactions = transactionsPerBudget.filter(
+    //     (transaction) => transaction.category_id === categoryIDArray[i]
+    //   );
+    // filteredTransactions = transactionsPerBudget.map((transaction) => {
+    //   if (transaction.category_id === categoryIDArray[i]) {
+    //     setFilteredTransactionsPerBudget((prevState) => [
+    //       ...prevState,
+    //       transaction,
+    //     ]);
+    //   }
+    // });
+    setFilteredTransactionsPerBudget(filteredTransactions);
+
+    // const filteredTransactions = transactionsPerBudget.filter(
+    //   (transaction) => transaction.category_id === categoryID
+    // );
+    // setFilteredTransactionsPerBudget(filteredTransactions);
+    return filteredTransactions;
+  };
+
+  useEffect(() => {
+    console.log(
+      "filteredTransactionsPerBudget: ",
+      filteredTransactionsPerBudget
+    );
+  }, [filteredTransactionsPerBudget]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -230,6 +278,9 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         authenticatedUser,
         transactionsPerBudget,
         setTransactionsPerBudget,
+        filteredTransactionsPerBudget,
+        setFilteredTransactionsPerBudget,
+        filterTransactionsByCategory,
       }}
     >
       {/* {loading ? null : children} */}

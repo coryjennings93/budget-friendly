@@ -12,6 +12,7 @@ import { useViewport } from "@/hooks/useViewport";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import SelectBudgetButton from "@/components/shared/buttons/SelectBudgetButton";
 import CreateBudgetForm from "@/components/shared/buttons/CreateBudgetButton";
+import PieChart from "@/components/shared/charts/PieChart";
 
 const Dashboard = () => {
   const {
@@ -63,7 +64,7 @@ const Dashboard = () => {
                   <CreateBudgetForm />
                 </article>
                 <article>
-                  <div className="bg-rose-500 w-100 h-100">piechart</div>
+                  <PieChart />
                 </article>
                 <article className="col-span-2">
                   {selectedBudget && <Transactions />}

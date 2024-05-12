@@ -105,7 +105,7 @@ const AddExpenseForm = () => {
       const response = await axiosPrivate
         .post("/api/v1/transactions", transaction)
         .then((response) => {
-          if (response.status === 201) {
+          if (response.statusText === "OK") {
             setTransactionsPerBudget(response.data);
           }
           console.log("Response.data: ", response.data);

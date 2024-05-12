@@ -32,13 +32,18 @@ interface ITransaction {
 }
 
 const TransactionList = () => {
-  const { transactionsPerBudget, categoriesInBudget } = useAuth();
+  const {
+    transactionsPerBudget,
+    categoriesInBudget,
+    categories,
+    filteredTransactionsPerBudget,
+  } = useAuth();
   console.log(
     "transactionsPerBudget from TransactionList",
     transactionsPerBudget
   );
 
-  if (!transactionsPerBudget || !categoriesInBudget) {
+  if (!transactionsPerBudget || !categoriesInBudget || !categories) {
     return <h1>Loading Data...</h1>;
   }
 
@@ -50,7 +55,8 @@ const TransactionList = () => {
 
   const renderExpense = (expense) => {
     console.log("HIIIIIIIIIIII I am running before TransactionRow");
-    <TransactionRow expense={expense} />;
+
+    return <TransactionRow key={expense.transaction_id} expense={expense} />;
 
     // console.log(filteredByDate);
     // console.log(expense.id);
@@ -88,9 +94,13 @@ const TransactionList = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactionsPerBudget.map((expense: ITransaction) => (
-              <TransactionRow key={expense.transaction_id} expense={expense} />
-            ))}
+            {filteredTransactionsPerBudget.length > 0
+              ? filteredTransactionsPerBudget.map((expense: ITransaction) => {
+                  return renderExpense(expense);
+                })
+              : transactionsPerBudget.map((expense: ITransaction) => {
+                  return renderExpense(expense);
+                })}
           </TableBody>
           <TableFooter>
             <TableRow>

@@ -22,7 +22,7 @@ const DashboardCategoriesSection = () => {
             }) => (
               <DashboardCategoryCard
                 key={category.category_id}
-                category={category.category_name}
+                category={category}
                 budgetAmount={category.budget_by_category_amount}
               />
             )

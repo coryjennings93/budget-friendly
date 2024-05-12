@@ -13,10 +13,10 @@ import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/context/AuthContext";
 
 const CategoriesDropdownAuth = ({}) => {
-  const { categoriesInBudget } = useAuth();
+  const { categoriesInBudget, filterTransactionsByCategory } = useAuth();
   console.log("categoriesInBudget", categoriesInBudget);
 
-  const [isChecked, setIsChecked] = React.useState<string[]>([]);
+  const [isChecked, setIsChecked] = React.useState<number[]>([]);
 
   const [isAllChecked, setIsAllChecked] = React.useState(() => {
     return isChecked.length === 0 ? true : false;
@@ -25,6 +25,11 @@ const CategoriesDropdownAuth = ({}) => {
   React.useEffect(() => {
     if (isChecked.length === 0) {
       setIsAllChecked(true);
+      filterTransactionsByCategory([]);
+    }
+    if (isChecked.length > 0) {
+      //   setIsAllChecked(false);
+      filterTransactionsByCategory(isChecked);
     }
   }, [isChecked]);
 
@@ -73,21 +78,19 @@ const CategoriesDropdownAuth = ({}) => {
           }) => (
             <DropdownMenuCheckboxItem
               key={category.category_id}
-              checked={isChecked.includes(category.category_name)}
+              checked={isChecked.includes(category.category_id)}
               onCheckedChange={(newCheckedState) => {
                 setIsAllChecked(false);
 
                 setIsChecked((prev) => {
                   if (newCheckedState) {
-                    return [...prev, category.category_name];
+                    return [...prev, category.category_id];
                   } else {
-                    return prev.filter(
-                      (item) => item !== category.category_name
-                    );
+                    return prev.filter((item) => item !== category.category_id);
                   }
                 });
 
-                if (isChecked.includes(category.category_name)) {
+                if (isChecked.includes(category.category_id)) {
                   setIsAllChecked(false);
                 }
               }}
