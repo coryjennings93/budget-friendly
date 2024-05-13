@@ -57,13 +57,18 @@ const Dashboard = () => {
             <section>
               {user && <h2>Hi {user.name}!</h2>}
 
-              <LogoutButton />
               <section className="grid grid-cols-2">
                 <article className="flex gap-1">
                   <SelectBudgetButton />
                   <CreateBudgetForm />
+                  {selectedBudget && (
+                    <div>
+                      <p>{selectedBudget.monthly_budget_name}</p>
+                      <p>Total: ${selectedBudget.monthly_budget_amount}</p>
+                    </div>
+                  )}
                 </article>
-                <article>
+                <article className="border-blue-200 border-2 rounded pb-3 pt-1 mr-2">
                   <PieChart />
                 </article>
                 <article className="col-span-2">

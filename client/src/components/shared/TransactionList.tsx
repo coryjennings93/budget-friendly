@@ -54,8 +54,6 @@ const TransactionList = () => {
   //   }
 
   const renderExpense = (expense) => {
-    console.log("HIIIIIIIIIIII I am running before TransactionRow");
-
     return <TransactionRow key={expense.transaction_id} expense={expense} />;
 
     // console.log(filteredByDate);
@@ -83,7 +81,7 @@ const TransactionList = () => {
   if (width >= MEDIUM_SCREEN_SIZE) {
     return (
       <div className="flex items-center justify-center ">
-        <Table className="max-w-screen-md mx-1 border-4 rounded-lg bg-gray-50 border-slate-50">
+        <Table className="max-w-screen-md mx-1 border-2  bg-white border-blue-200 rounded">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Date</TableHead>

@@ -17,7 +17,7 @@ const Transactions = () => {
           <div>
             <CategoriesDropdownAuth />
           </div>
-          <div>
+          {/* <div>
             <AddCategory />
           </div>
           <div>
@@ -25,7 +25,7 @@ const Transactions = () => {
           </div>
           <div>
             <FilterByDateButton />
-          </div>
+          </div> */}
 
           <div className="ml-auto">
             <AddExpense />
