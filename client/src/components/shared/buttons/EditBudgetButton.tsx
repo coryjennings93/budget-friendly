@@ -11,7 +11,7 @@ import CreateBudgetForm from "@/components/forms/CreateBudgetForm";
 import EditBudgetForm from "@/components/forms/EditBudgetForm";
 
 interface EditBudgetButtonProps {
-  handleIsOpen: () => void;
+  handleIsOpen: () => void | null;
   fromAddTransaction: boolean;
 }
 

@@ -6,12 +6,12 @@ const DashboardCategoriesSection = () => {
   const { categoriesInBudget, selectedBudget } = useAuth();
 
   return (
-    <section className="p-2 m-2 border-2 rounded border-slate-500">
+    <section className="">
       <div className="flex flex-row justify-between">
         <h3>Categories</h3>
         {selectedBudget ? <EditBudgetButton /> : null}
       </div>
-      <div className="h-[300px] overflow-y-scroll scroller">
+      <div className="overflow-y-scroll scroller">
         {categoriesInBudget && categoriesInBudget.length > 0 ? (
           categoriesInBudget.map(
             (category: {

@@ -105,8 +105,11 @@ const EditBudgetForm = () => {
   async function onSubmit(values: z.infer<typeof EditBudgetValidation>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log("HII from onSubmit");
 
+    const validCategories = values.categories.filter(
+      (category) => category.category && category.categoryAmount
+    );
+    console.log("validCategories: ", validCategories);
     if (
       calculateTotalCategoriesAmount(values.categories) !== values.budgetAmount
     ) {
@@ -119,13 +122,17 @@ const EditBudgetForm = () => {
     }
 
     // update the categoriesInBudget state
-    setCategoriesInBudget(() => {
-      const categoriesInBudgetObject = validCategories.map((category) => ({
-        category_name: category.category,
+    const updatedCategoriesInBudgetState = validCategories.map((category) => {
+      return {
         budget_by_category_amount: category.categoryAmount,
-      }));
-      return categoriesInBudgetObject;
+        category_id: categories.find(
+          (cat) => cat.category_name === category.category
+        ).category_id,
+        category_name: category.category,
+        monthly_budget_id: selectedBudget.monthly_budget_id,
+      };
     });
+    setCategoriesInBudget(updatedCategoriesInBudgetState);
 
     // update selectedBudget state
     setSelectedBudget(() => {

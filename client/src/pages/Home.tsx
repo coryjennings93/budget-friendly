@@ -16,7 +16,6 @@ const Home = () => {
 
   return (
     <>
-      <Button onClick={test}>test</Button>
       <div className="min-h-screen text-teal2darker bg-[url('../src/assets/img/abstract-background.jpg')] bg-no-repeat  ">
         <HomeNavbar />
         <div className="flex flex-col gap-16 p-6 lg:p-24 lg:px-52 lg:flex-row md:px-24">

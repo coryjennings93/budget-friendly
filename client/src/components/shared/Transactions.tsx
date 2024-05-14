@@ -13,16 +13,11 @@ const Transactions = () => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-center">
-        <div className="flex max-w-[768px] w-full gap-1 my-1">
+        <div className="flex max-w-[768px] w-full gap-1 my-1 px-1">
           <div>
             <CategoriesDropdownAuth />
           </div>
-          {/* <div>
-            <AddCategory />
-          </div>
-          <div>
-            <DeleteCategoryButton />
-          </div>
+          {/* 
           <div>
             <FilterByDateButton />
           </div> */}

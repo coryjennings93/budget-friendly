@@ -31,15 +31,21 @@ const DashboardHeader = ({
     setShowMenu(!showMenu);
   };
 
+  //[url('../src/assets/img/abstract-background.jpg')]
+  // gradient-to-r from-sky-700 to-sky-800 shadow-md
+  // rgb(187 166 104)
+  // hsl(176.33deg 25.84% 53.15%)
+  // rgb(15 57 53)
+
   return (
     <div
-      className="flex items-center justify-between p-2 pr-10 text-teal2darker bg-[url('../src/assets/img/abstract-background.jpg')]"
+      className="flex items-center justify-between p-2 pr-10 text-teal-900 "
       ref={headerRef}
     >
       <Link to="/">
         <div className="flex">
           <LogoIcon width="w-14" />
-          <h1 className="pb-2 pl-4 mb-1 text-2xl sm:text-2xl md:text-4xl text-[#19985b]">
+          <h1 className="pt-1 pl-4 mb-1 text-2xl sm:text-2xl md:text-4xl ">
             {SITE_NAME}
           </h1>
         </div>
@@ -98,13 +104,7 @@ const DashboardHeader = ({
       ) : (
         <div className="">
           {user ? (
-            <>
-              <LogoutButton />
-              {/* <button className="w-48 px-4 py-2 m-2 font-bold border-2 rounded-full hover:text-white hover:bg-sky-700 border-sky-800 ">
-                Log Out
-              </button> */}
-              <ProfileIcon />
-            </>
+            <ProfileIcon />
           ) : (
             <>
               <Link to="/">Home</Link>

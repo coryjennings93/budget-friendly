@@ -6,8 +6,8 @@ import { useAuth } from "@/context/AuthContext";
 
 const TransactionRow = ({ expense }) => {
   const { categoriesInBudget } = useAuth();
-  console.log("TransactionRow expense", expense);
-  console.log("categoriesInBudget from TransactionRow", categoriesInBudget);
+  // console.log("TransactionRow expense", expense);
+  // console.log("categoriesInBudget from TransactionRow", categoriesInBudget);
 
   const category = categoriesInBudget.find(
     (element: {

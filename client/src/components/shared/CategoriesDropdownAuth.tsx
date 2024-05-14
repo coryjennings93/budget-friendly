@@ -44,7 +44,7 @@ const CategoriesDropdownAuth = ({}) => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button variant="default">
           <FontAwesomeIcon icon={faFilter} className="mr-1" />
           Filter by Category
         </Button>
