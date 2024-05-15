@@ -9,6 +9,18 @@ const TransactionRow = ({ expense }) => {
   // console.log("TransactionRow expense", expense);
   // console.log("categoriesInBudget from TransactionRow", categoriesInBudget);
 
+  if (!categoriesInBudget) {
+    return (
+      <TableRow>
+        <TableCell className="font-medium"></TableCell>
+        <TableCell></TableCell>
+        <TableCell></TableCell>
+        <TableCell className="text-right"></TableCell>
+        <TableCell className=""></TableCell>
+      </TableRow>
+    );
+  }
+
   const category = categoriesInBudget.find(
     (element: {
       budget_by_category_amount: number;
@@ -35,8 +47,8 @@ const TransactionRow = ({ expense }) => {
       </TableCell>
       <TableCell className="">
         <div className="flex gap-2">
-          {/* <EditExpenseButton expense={expense} />
-          <DeleteExpenseButton expense={expense} /> */}
+          <EditExpenseButton expense={expense} />
+          <DeleteExpenseButton expense={expense} />
         </div>
       </TableCell>
     </TableRow>

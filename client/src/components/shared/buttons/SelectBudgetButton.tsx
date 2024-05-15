@@ -16,6 +16,7 @@ const SelectBudgetButton = () => {
     setCategoriesInBudget,
     setSelectedBudget,
     setTransactionsPerBudget,
+    selectedBudget,
   } = useAuth();
 
   const axiosPrivate = useAxiosAuthInstance();
@@ -29,6 +30,7 @@ const SelectBudgetButton = () => {
     const categoriesPerBudget = await axiosPrivate.get(
       `/api/v1/budgets/${budgetID}/categories`
     );
+    console.log("categoriesPerBudget from Select: ", categoriesPerBudget.data);
     const categoriesArray = categoriesPerBudget.data;
     // need to parse the budget_by_category_amount to a float because it is stred as a numeric data type in postgres
     // and is returned as a string
@@ -37,6 +39,7 @@ const SelectBudgetButton = () => {
         categoriesArray[i].budget_by_category_amount
       );
     }
+    console.log("categoriesArray from Select: ", categoriesArray);
     setCategoriesInBudget(categoriesArray);
 
     // get transactions for the selected budget
@@ -53,8 +56,16 @@ const SelectBudgetButton = () => {
     setTransactionsPerBudget(transactionsPerBudget.data);
   };
 
+  console.log(
+    "HERTEAR: ",
+    selectedBudget ? selectedBudget.monthly_budget_name : null
+  );
+
   return (
-    <Select onValueChange={handleSelectChange}>
+    <Select
+      onValueChange={handleSelectChange}
+      value={selectedBudget ? selectedBudget.monthly_budget_name : undefined}
+    >
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select Budget" />
       </SelectTrigger>

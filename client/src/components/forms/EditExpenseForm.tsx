@@ -31,22 +31,55 @@ import { format } from "date-fns";
 import { useExpensesDemo } from "@/context";
 import LogoIcon from "../icons/LogoIcon";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const EditExpenseForm = ({ expense, onSubmit, form }) => {
-  const { categories, expenses, editExpense } = useExpensesDemo();
-  const categoriesList = categories.map((category: string) => category.name);
+  const { categoriesDemo, expenses, editExpense } = useExpensesDemo();
+  const { user, categoriesInBudget, categories } = useAuth();
+
+  console.log("From EditExpenseForm: ", expense);
+  console.log("categoriesInBudget from EditExpenseForm: ", categoriesInBudget);
+
+  // category list depending on if user is authenticated or not
+  const categoriesList = user
+    ? categoriesInBudget.map((category) => {
+        return {
+          category_name: category.category_name,
+          category_id: category.category_id,
+        };
+      })
+    : categoriesDemo.map((category) => category.name);
+
   // need to set state to clear the field values back to original values when closed without saving
 
-  const [costValue, setCostValue] = useState(expense.cost.toString());
-  const [categoryValue, setCategoryValue] = useState(expense.category);
-  const [dateValue, setDateValue] = useState(new Date(expense.date));
+  const [costValue, setCostValue] = useState(
+    user ? expense.transaction_amount.toString() : expense.cost.toString()
+  );
+
+  console.log("category_id from edit Form: ", expense.category_id);
+  console.log(
+    "list: ",
+    categoriesList.find((cat) => cat.category_id === expense.category_id)
+      .category_name
+  );
+  console.log("categories List: ", categoriesList);
+  const [categoryValue, setCategoryValue] = useState(
+    user
+      ? categoriesList.find((cat) => cat.category_id === expense.category_id)
+          .category_name
+      : expense.category
+  );
+  const [dateValue, setDateValue] = useState(
+    user
+      ? new Date(expense.transaction_date.toDateString())
+      : new Date(expense.date)
+  );
   const [transactionValue, setTransactionValue] = useState(
-    expense.transactionDescription
+    user ? expense.transaction_description : expense.transactionDescription
   );
   const [transactionTypeValue, setTransactionTypeValue] = useState(
-    expense.transactionType
+    user ? "expense" : expense.transactionType
   );
-  console.log(expense);
 
   /* Defining form and submit handler are taken care of in parent componet: EditExpenseButton
         I am not sure if this is the best way for reuse purposes but i wanted to be able to close the 
@@ -66,7 +99,7 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col w-full gap-3 mt-4"
         >
-          <div className="max-w-48">
+          {/* <div className="max-w-48">
             <FormField
               control={form.control}
               name="transactionType"
@@ -100,7 +133,7 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
                 </FormItem>
               )}
             />
-          </div>
+          </div> */}
           <FormField
             control={form.control}
             name="id"
@@ -138,7 +171,7 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
                           )}
                         >
                           {field.value ? (
-                            format(new Date(dateValue), "MM/dd/yyyy")
+                            format(dateValue, "MM/dd/yyyy")
                           ) : (
                             <span>Date of expense</span>
                           )}
@@ -154,7 +187,6 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
                         toYear={new Date().getFullYear()}
                         selected={new Date(dateValue)}
                         onSelect={(e) => {
-                          console.log(e);
                           field.onChange(e);
                           setDateValue(e);
                         }}
@@ -186,7 +218,9 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
                       prefix="$ "
                       value={costValue}
                       onValueChange={(value, name, values) => {
-                        value ? setCostValue(value) : setCostValue("");
+                        value
+                          ? setCostValue(value.toString())
+                          : setCostValue("");
                         field.onChange(value);
                       }}
                       className="h-10 px-3 py-2 text-sm font-normal border rounded-md border-input"
@@ -216,9 +250,19 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categoriesList.map((category: string) => (
-                      <SelectItem value={category}>{category}</SelectItem>
-                    ))}
+                    {categoriesList.map(
+                      (category: {
+                        category_name: string;
+                        category_id: number;
+                      }) => (
+                        <SelectItem
+                          value={category.category_name}
+                          key={category.category_id}
+                        >
+                          {category.category_name}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -254,7 +298,7 @@ const EditExpenseForm = ({ expense, onSubmit, form }) => {
             type="submit"
             className="mt-6 text-lg"
           >
-            {form.formState.isSubmitting ? "Saving..." : "Save"}
+            {form.formState.isSubmitting ? "Editing..." : "Edit"}
           </Button>
           {form.formState.errors.root && (
             <div className="text-red-500">

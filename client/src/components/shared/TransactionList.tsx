@@ -38,14 +38,40 @@ const TransactionList = () => {
     categories,
     filteredTransactionsPerBudget,
   } = useAuth();
-  console.log(
-    "transactionsPerBudget from TransactionList",
-    transactionsPerBudget
-  );
 
-  if (!transactionsPerBudget || !categoriesInBudget || !categories) {
-    return <h1>Loading Data...</h1>;
-  }
+  const calculatedTotal = () => {
+    if (filteredTransactionsPerBudget.length > 0) {
+      return filteredTransactionsPerBudget.reduce((acc, curr) => {
+        if (typeof curr.transaction_amount === "string") {
+          const currentAmountStringToNumber = parseFloat(
+            curr.transaction_amount
+          );
+          return acc + currentAmountStringToNumber;
+        }
+        return acc + curr.transaction_amount;
+      }, 0);
+    } else {
+      return transactionsPerBudget.reduce((acc, curr) => {
+        if (typeof curr.transaction_amount === "string") {
+          const currentAmountStringToNumber = parseFloat(
+            curr.transaction_amount
+          );
+          return acc + currentAmountStringToNumber;
+        }
+        return acc + curr.transaction_amount;
+      }, 0);
+    }
+  };
+
+  const [total, setTotal] = useState<number>(() => {
+    return calculatedTotal();
+  });
+
+  useEffect(() => {
+    const calculatedTotalReturnValue = calculatedTotal();
+    console.log("calculatedtotalreturnvalue: ", calculatedTotalReturnValue);
+    setTotal(calculatedTotalReturnValue);
+  }, [transactionsPerBudget, filteredTransactionsPerBudget]);
 
   const { width } = useViewport();
   //   transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -81,14 +107,22 @@ const TransactionList = () => {
   if (width >= MEDIUM_SCREEN_SIZE) {
     return (
       <div className="flex items-center justify-center ">
-        <Table className="max-w-screen-md mx-1 border-2  bg-white border-blue-200 rounded">
-          <TableHeader>
+        <Table className="max-w-screen-md   bg-white">
+          <TableHeader className="bg-cyan-700  ">
             <TableRow>
-              <TableHead className="w-[100px]">Date</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead className="text-right">Cost</TableHead>
-              <TableHead className="w-[132.25px]"></TableHead>
+              <TableHead className="w-[100px] text-offwhite font-bold">
+                Date
+              </TableHead>
+              <TableHead className="text-offwhite font-bold">
+                Category
+              </TableHead>
+              <TableHead className="text-offwhite font-bold">
+                Location
+              </TableHead>
+              <TableHead className="text-right text-offwhite font-bold">
+                Cost
+              </TableHead>
+              <TableHead className="w-[100px] "></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -108,7 +142,7 @@ const TransactionList = () => {
                 <b>Total:</b>
               </TableCell>
               <TableCell className="text-right">
-                {/* {currencyFormatter.format(total)} */}
+                {currencyFormatter.format(total)}
               </TableCell>
               <TableCell></TableCell>
             </TableRow>

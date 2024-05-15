@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
 import ExpensesCompleteTable from "@/components/shared/ExpensesCompleteTable";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useViewport } from "@/hooks/useViewport";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import SelectBudgetButton from "@/components/shared/buttons/SelectBudgetButton";
@@ -15,6 +15,8 @@ import CreateBudgetForm from "@/components/shared/buttons/CreateBudgetButton";
 import PieChart from "@/components/shared/charts/PieChart";
 import LineChart from "@/components/shared/charts/LineChart";
 import EditBudgetButton from "@/components/shared/buttons/EditBudgetButton";
+import CategoriesDropdownAuth from "@/components/shared/CategoriesDropdownAuth";
+import AddExpense from "@/components/shared/AddExpense";
 
 const Dashboard = () => {
   const {
@@ -25,6 +27,7 @@ const Dashboard = () => {
     selectedBudget,
     categoriesInBudget,
   } = useAuth();
+  const dashRef = useRef(null);
   const { height } = useViewport();
 
   const [navBarHeight, setNavBarHeight] = useState<number | null>(null);
@@ -38,6 +41,10 @@ const Dashboard = () => {
     setRemainingHeight(height - navBarHeight);
   }, [height, navBarHeight]);
 
+  useEffect(() => {
+    console.log("DashRef: ", dashRef);
+  }, []);
+
   if (!budgets || !categories) {
     // Render a loading indicator or placeholder until all data is fetched
     return <h1>Loading Data...</h1>;
@@ -47,10 +54,22 @@ const Dashboard = () => {
     return <h1>Loading Data...</h1>;
   }
 
+  // used to get the entire height of components including margins
+  // const componentHeightWithMargins = (el) => {
+  //   let height = el.offsetHeight;
+  //   const style = window.getComputedStyle(el);
+  //   height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+  //   return height;
+  // };
+
+  // console.log("Computed Height: ", componentHeightWithMargins(DashboardHeader));
+
   return (
     <>
-      <div className="">
-        <DashboardHeader getHeight={handleNavBarHeight} />
+      <div className="overflow-hidden">
+        <div ref={dashRef}>
+          <DashboardHeader getHeight={handleNavBarHeight} />
+        </div>
         {!selectedBudget ? (
           <section
             style={{ minHeight: remainingHeight }}
@@ -65,15 +84,11 @@ const Dashboard = () => {
             <article className="flex gap-1 justify-center items-center mt-3">
               <SelectBudgetButton />
               <CreateBudgetForm />
-              <EditBudgetButton
-                handleIsOpen={null}
-                fromAddTransaction={false}
-              />
             </article>
           </section>
         ) : (
           <div
-            className="grid grid-cols-[minmax(0px,_1fr)_300px]"
+            className="grid grid-cols-[minmax(0px,_1fr)_300px] pr-2"
             style={{ minHeight: remainingHeight }}
           >
             <div>
@@ -93,7 +108,20 @@ const Dashboard = () => {
                   <div className="flex gap-1 justify-center items-center mt-3">
                     <SelectBudgetButton />
                     <CreateBudgetForm />
+                    <EditBudgetButton
+                      handleIsOpen={null}
+                      fromAddTransaction={false}
+                    />
                   </div>{" "}
+                  <div className="flex max-w-[768px] w-full gap-1 mt-1 px-1 justify-center">
+                    <div>
+                      <CategoriesDropdownAuth />
+                    </div>
+
+                    <div className="">
+                      <AddExpense />
+                    </div>
+                  </div>
                 </article>
                 <article
                   className="border-blue-200 border-2 rounded pb-3 pt-1 mr-2 mt-1 shadow-md
@@ -102,7 +130,7 @@ const Dashboard = () => {
                   <LineChart />
                 </article>
                 {selectedBudget && (
-                  <article className="col-span-2 border-2 border-blue-200 rounded mx-2 pb-2 mb-2 shadow-md">
+                  <article className="col-span-2 border-2 border-blue-200 rounded mx-2  mb-2 shadow-md">
                     <Transactions />
                   </article>
                 )}

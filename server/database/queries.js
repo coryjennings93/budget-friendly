@@ -126,6 +126,35 @@ const postTransaction = async ({
   }
 };
 
+const updateTransaction = async (transaction) => {
+  try {
+    await pool.query(
+      "UPDATE transaction SET transaction_date = $1, transaction_description = $2, transaction_amount= $3, category_id = $4 WHERE transaction_id = $5",
+      [
+        transaction.transaction_date,
+        transaction.transaction_description,
+        transaction.transaction_amount,
+        transaction.category_id,
+        transaction.transaction_id,
+      ]
+    );
+    return;
+  } catch (e) {
+    throw new QueryError(e);
+  }
+};
+
+const deleteTransaction = async (transaction) => {
+  try {
+    await pool.query("DELETE FROM transaction WHERE transaction_id = $1", [
+      transaction.transaction_id,
+    ]);
+    return;
+  } catch (e) {
+    throw new QueryError(e);
+  }
+};
+
 const getTransactionsPerBudget = async (user_id, budget_id) => {
   const transactions = await pool.query(
     "SELECT * FROM transaction WHERE user_account_id = $1 AND monthly_budget_id = $2",
@@ -296,6 +325,8 @@ module.exports = {
   insertIntoBudgetByCategory,
   getTransactionsPerBudget,
   postTransaction,
+  updateTransaction,
+  deleteTransaction,
   updateBudget,
   deleteBudgetByCategory,
 };

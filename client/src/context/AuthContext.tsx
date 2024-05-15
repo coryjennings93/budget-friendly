@@ -170,7 +170,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       const budgetsResponse = await axiosPrivate.get("/api/v1/budgets");
       if (budgetsResponse.statusText === "OK") {
         const budgetsData = await budgetsResponse.data;
-        console.log("budgetsData: ", budgetsData);
         setBudgets(budgetsData);
       } else {
         console.log("Error fetching budgets: ", budgetsResponse);
@@ -178,7 +177,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
       const categoriesResponse = await axiosPrivate.get("/api/v1/categories");
       if (categoriesResponse.statusText === "OK") {
         const categoriesData = await categoriesResponse.data;
-        console.log("categoriesData: ", categoriesData);
         setCategories(categoriesData);
       } else {
         console.log("Error fetching categories: ", categoriesResponse);
@@ -203,6 +201,13 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
         if (response.ok) {
           setUser(null);
           setAccessToken(null);
+          setBudgets(null);
+          setCategories(null);
+          setTransactions(null);
+          setCategoriesInBudget(null);
+          setTransactionsPerBudget(null);
+          setFilteredTransactionsPerBudget([]);
+          setSelectedBudget(null);
         }
         throw response;
       })
@@ -213,7 +218,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   // function to help with filtering the transactions by category
   const filterTransactionsByCategory = (categoryIDArray) => {
-    console.log("categoryIDArray: ", categoryIDArray);
     if (!transactionsPerBudget) {
       return [];
     }

@@ -39,8 +39,7 @@ export const LoginValidation = z.object({
   })
 
 export const EditExpenseValidation = z.object({
-  id: z.string(),
-  transactionType: z.string().min(1, {message: 'Please select a transaction type.'}),
+  id: z.number(),
   date: z.date({
     required_error: "A date of transaction is needed.",
   }),
