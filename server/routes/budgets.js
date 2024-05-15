@@ -8,6 +8,7 @@ const {
   getTransactionsPerBudget,
   deleteBudgetByCategory,
   updateBudget,
+  deleteBudget,
 } = require("../database/queries");
 const { authenticateToken } = require("../middleware/authorization");
 const { tryCatch } = require("../utils/trycatch");
@@ -131,6 +132,28 @@ router
       const budgetsAfterUpdate = await getBudgets(userId);
 
       res.status(200).json(budgetsAfterUpdate);
+    })
+  )
+  .delete(
+    authenticateToken,
+    tryCatch(async (req, res, next) => {
+      try {
+        // get user id from token
+        const payload = jwt.decode(req.cookies.access_token);
+        const userId = payload.user_account_id;
+
+        // create budget to send to delete
+        const budget = {
+          monthly_budget_id: req.body.monthly_budget_id,
+        };
+        console.log("HIII from DELETE BUDGET ROUTE");
+        const newBudgetsList = await deleteBudget(budget).then(async () => {
+          return await getBudgets(userId);
+        });
+        res.status(200).json(newBudgetsList);
+      } catch (e) {
+        res.status(500).json({ message: "Error deleting budget" });
+      }
     })
   );
 

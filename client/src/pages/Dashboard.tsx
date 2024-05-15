@@ -17,6 +17,7 @@ import LineChart from "@/components/shared/charts/LineChart";
 import EditBudgetButton from "@/components/shared/buttons/EditBudgetButton";
 import CategoriesDropdownAuth from "@/components/shared/CategoriesDropdownAuth";
 import AddExpense from "@/components/shared/AddExpense";
+import DeleteBudgetButton from "@/components/shared/buttons/DeleteBudgetButton";
 
 const Dashboard = () => {
   const {
@@ -112,6 +113,7 @@ const Dashboard = () => {
                       handleIsOpen={null}
                       fromAddTransaction={false}
                     />
+                    <DeleteBudgetButton />
                   </div>{" "}
                   <div className="flex max-w-[768px] w-full gap-1 mt-1 px-1 justify-center">
                     <div>

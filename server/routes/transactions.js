@@ -113,8 +113,4 @@ router
     })
   );
 
-// update transactions
-
-// delete transactions
-
 module.exports = router;

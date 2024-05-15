@@ -216,6 +216,20 @@ const updateBudget = async (budget) => {
   }
 };
 
+// Delete Budget
+const deleteBudget = async (budget) => {
+  console.log("Budget from delete query: ", budget);
+  try {
+    await pool.query(
+      "DELETE FROM monthly_budget WHERE monthly_budget_id = $1",
+      [budget.monthly_budget_id]
+    );
+    return;
+  } catch (e) {
+    throw new QueryError(e);
+  }
+};
+
 const getCategories = async (user_id) => {
   const categories = await pool.query(
     "SELECT * FROM category WHERE user_account_id = $1",
@@ -318,6 +332,8 @@ module.exports = {
   checkRefreshTokenByUserId,
   getBudgets,
   postBudget,
+  updateBudget,
+  deleteBudget,
   getCategories,
   getCategoriesPerBudget,
   checkCategoryAndReturnID,
@@ -327,6 +343,5 @@ module.exports = {
   postTransaction,
   updateTransaction,
   deleteTransaction,
-  updateBudget,
   deleteBudgetByCategory,
 };
